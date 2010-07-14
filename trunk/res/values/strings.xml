@@ -15,9 +15,9 @@
 -->
 
 <resources>
-    <string name="app_name">Swipe 'n' Roll</string>
+    <string name="app_name">Swipe \'n\' Roll</string>
     
-    <string name="title">Swipe 'n' Roll</string>
+    <string name="title">Swipe \'n\' Roll</string>
     <string name="start_game">Touch screen to play</string>
     
     <string name="game_over">Game Over</string>
