@@ -16,10 +16,6 @@
 
 package se.anyro.snr;
 
-import se.anyro.snr.bodies.Ball;
-import se.anyro.snr.bodies.Goal;
-import se.anyro.snr.bodies.Hole;
-import se.anyro.snr.bodies.Wall;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -60,21 +56,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		
 		Rect frame = holder.getSurfaceFrame();
 		SizeUtil.setScreenSize(frame.width(), frame.height());
-		
-		mGameThread.add(new Hole(0, 13.5f));
-        mGameThread.add(new Hole(-8, 6.5f));
-        mGameThread.add(new Hole(-4, 3));
-        mGameThread.add(new Hole(8, -2.5f));
-        mGameThread.add(new Hole(-8, -5.5f));
-        
-        mGameThread.add(new Wall(1.5f, 9, 17, 2));
-        mGameThread.add(new Wall(-1.5f, 0, 17, 2));
-        mGameThread.add(new Wall(-1.5f, -8, 17, 2));
-        
-        mGameThread.add(new Goal(-8, 13));
-
-        mGameThread.add(new Ball(0, -13));
-        
+				
         mGameThread.start(holder, frame.width(), frame.height());
 	}
 

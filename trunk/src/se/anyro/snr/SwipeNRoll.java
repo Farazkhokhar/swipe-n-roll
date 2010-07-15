@@ -48,6 +48,7 @@ public class SwipeNRoll extends Activity {
 	// Handler for receiving messages from the game thread in order to
 	// display messages on top of the game view.
 	private Handler mHandler = new Handler(new Callback() {
+
 		@Override
 		public boolean handleMessage(Message msg) {
 			// Display messages on top of the game view
@@ -56,7 +57,10 @@ public class SwipeNRoll extends Activity {
 				hideText();
 				break;
 			case GameThread.WIN:
-				showText(R.string.well_done, R.string.restart_game);
+				showText(R.string.well_done, R.string.next_level);
+				break;
+			case GameThread.COMPLETED:
+				showText(R.string.congratulations, R.string.last_game);
 				break;
 			case GameThread.GAME_OVER:
 				showText(R.string.game_over, R.string.restart_game);
@@ -109,7 +113,7 @@ public class SwipeNRoll extends Activity {
     @Override
     protected void onDestroy() {
     	super.onDestroy();
-    	mGameThread.destroy();
+    	mGameThread.reset();
     }
 
     @Override
