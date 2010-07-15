@@ -24,8 +24,8 @@ public abstract class Level {
 		new Level() {
 			@Override
 			public void setup(GameThread gameThread) {
-				gameThread.add(new Wall(-2, 5, 16, 2));
-		        gameThread.add(new Wall(2, -5, 16, 2));
+				gameThread.add(new Wall(-1.5f, 5, 17, 2));
+		        gameThread.add(new Wall(1.5f, -5, 17, 2));
 		        
 		        gameThread.add(new Goal(-8, 13));
 
