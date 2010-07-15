@@ -71,4 +71,16 @@ public class Wall extends Body {
 	public boolean contains(int x, int y) {
 		return mDrawable.getBounds().contains(x, y);
 	}
+	
+	@Override
+	public void onTouchStart() {
+		super.onTouchStart();
+		mDrawable.setStroke(1, 0x66ffff00);
+	}
+	
+	@Override
+	public void onTouchEnd() {
+		super.onTouchEnd();
+		mDrawable.setStroke(0, 0);
+	}
 }

@@ -68,6 +68,12 @@ public abstract class Body {
 		return false;
 	}
 
+	public void onTouchStart() {
+	}
+	
+	public void onTouchEnd() {
+	}
+	
 	public void destroy() {
 		Physics.destroyBody(mBody);
 	}
