@@ -25,7 +25,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 
-public class Circle extends Body {
+public abstract class Circle extends Body {
 
 	protected Fixture mFixture;
 	private GradientDrawable mDrawable;
