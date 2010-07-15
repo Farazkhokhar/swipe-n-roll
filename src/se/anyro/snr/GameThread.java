@@ -40,7 +40,8 @@ public class GameThread implements Runnable, ContactListener {
 	public static final int START = 0;
 	public static final int WIN = 1;
 	public static final int GAME_OVER = 2;
-	public static final int PAUSED = 3;
+	public static final int COMPLETED = 3;
+	public static final int PAUSED = 4;
 	
 	private GradientDrawable mBackground;
 	private ArrayList<Body> mBodies = new ArrayList<Body>();
@@ -62,6 +63,7 @@ public class GameThread implements Runnable, ContactListener {
     private Object mTouchLock = new Object();
 	
 	private State mState = State.INIT;
+	private int mLevel = 1;
 
 	private enum State {
     	INIT,
@@ -90,6 +92,7 @@ public class GameThread implements Runnable, ContactListener {
 	public void start(SurfaceHolder surfaceHolder, int width, int height) {
     	mSurfaceHolder = surfaceHolder;
 		if (mThread == null) {
+			Level.setupLevel(this, mLevel);
 			createBackground(width, height);
 			mThread = new Thread(this, "GameThread");
 			mThread.start();
@@ -136,9 +139,11 @@ public class GameThread implements Runnable, ContactListener {
         }
     }
 
-	public void destroy() {
+	public void reset() {
 		for (Body body : mBodies)
 			body.destroy();
+		mBodies.clear();
+		mWalls.clear();
 	}
     
 	public void add(Body body) {
@@ -170,9 +175,8 @@ public class GameThread implements Runnable, ContactListener {
 	}
 	
 	private void resetGame() {
-		for (Body body : mBodies) {
-			body.reset();
-		}
+		reset();
+		Level.setupLevel(this, mLevel);
 	}
 
 	@Override
@@ -288,7 +292,13 @@ public class GameThread implements Runnable, ContactListener {
 			
 			if (mCollision.hole instanceof Goal) {
 				mState = State.WIN;
-				mHandler.sendEmptyMessage(WIN);
+				if (mLevel < Level.count()) {
+					++mLevel; 
+					mHandler.sendEmptyMessage(WIN);
+				} else {
+					mLevel = 1;
+					mHandler.sendEmptyMessage(COMPLETED);
+				}
 			} else {
 				mState = State.GAME_OVER;
 				mHandler.sendEmptyMessage(GAME_OVER);

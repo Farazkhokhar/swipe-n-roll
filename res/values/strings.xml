@@ -21,8 +21,11 @@
     <string name="start_game">Touch screen to play</string>
     
     <string name="game_over">Game Over</string>
+    <string name="congratulations">Congratulations!</string>
     <string name="well_done">Well Done!</string>
     <string name="paused">Paused...</string>
     <string name="resume_game">Touch screen to resume</string>
+    <string name="next_level">Touch screen for next level</string>
     <string name="restart_game">Touch screen to play again</string>
+    <string name="last_game">Touch screen to restart at level 1</string>
 </resources>
