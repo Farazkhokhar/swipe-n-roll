@@ -29,11 +29,14 @@ public abstract class Circle extends Body {
 
 	protected Fixture mFixture;
 	private GradientDrawable mDrawable;
-	private Point screenPos = new Point();
+	private Point mScreenPos = new Point();
 	private int mScreenRadius;
+	private float mWidth;
 	
 	public Circle(float x, float y, float radius, boolean isHole, int innerColor, int outerColor) {
 		super(x, y);
+		
+		mWidth = 2 * radius;
 		
 		// Init physics
 		CircleShape circleShape = new CircleShape();
@@ -58,10 +61,15 @@ public abstract class Circle extends Body {
 	@Override
 	public void draw(Canvas canvas) {
 		Vector2 bodyPos = mBody.getPosition();
-		SizeUtil.toScreen(bodyPos.x, bodyPos.y, screenPos);
+		SizeUtil.toScreen(bodyPos.x, bodyPos.y, mScreenPos);
 		
-		mDrawable.setBounds(screenPos.x - mScreenRadius, screenPos.y - mScreenRadius, screenPos.x + mScreenRadius,
-				screenPos.y + mScreenRadius);
+		mDrawable.setBounds(mScreenPos.x - mScreenRadius, mScreenPos.y - mScreenRadius, mScreenPos.x + mScreenRadius,
+				mScreenPos.y + mScreenRadius);
 		mDrawable.draw(canvas);
+	}
+	
+	@Override
+	public float getWidth() {
+		return mWidth;
 	}
 }
