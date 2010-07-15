@@ -27,6 +27,9 @@ public abstract class Level {
 				gameThread.add(new Wall(-2f, 5, 16, 2));
 		        gameThread.add(new Wall(2f, -5, 16, 2));
 		        
+		        gameThread.add(new Wall(-5, 0, 5, 2));
+		        gameThread.add(new Wall(5, 0, 5, 2));
+		        
 		        gameThread.add(new Goal(-8, 13));
 
 		        gameThread.add(new Ball(0, -13));

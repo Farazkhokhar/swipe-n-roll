@@ -63,8 +63,11 @@ public class GameThread implements Runnable, ContactListener {
     private Point mTouchMove = new Point();
     private Point mTouchEnd = new Point();
     private Object mTouchLock = new Object();
+    
 	private float mLeftLimit = -10;
 	private float mRightLimit = 10;
+	private Rect mLeftBounds = new Rect();
+	private Rect mRightBounds = new Rect();
 	
 	private State mState = State.INIT;
 	private int mLevel = 1;
@@ -272,6 +275,32 @@ public class GameThread implements Runnable, ContactListener {
 		float halfWidth = mSwipee.getWidth() / 2f;
 		mLeftLimit = -10 + halfWidth;
 		mRightLimit = 10 - halfWidth;
+		
+		Rect swipeeBounds = mSwipee.getScreenBounds();
+		
+		for (Body body : mWalls) {
+			if (body == mSwipee)
+				continue;
+
+			Rect bounds = body.getScreenBounds();
+			
+			// Check vertical intersection
+			if (bounds.top < swipeeBounds.bottom && bounds.bottom > swipeeBounds.top) {
+				if (bounds.left > swipeeBounds.right) {
+					// Calculate new right limit
+					int diff = bounds.left - swipeeBounds.right;
+					float newRightLimit = mSwipee.getPosition().x + SizeUtil.fromScreen(diff - 1);
+					if (newRightLimit < mRightLimit)
+						mRightLimit = newRightLimit;
+				} else if (bounds.right < swipeeBounds.left) {
+					// Calculate new left limit
+					int diff = swipeeBounds.left - bounds.right;
+					float newLeftLimit = mSwipee.getPosition().x - SizeUtil.fromScreen(diff - 1);
+					if (newLeftLimit > mLeftLimit)
+						mLeftLimit = newLeftLimit;
+				}
+			}
+		}
 	}
 
 	private void touchMove() {

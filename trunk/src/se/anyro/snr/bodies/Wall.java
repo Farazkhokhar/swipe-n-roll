@@ -31,19 +31,22 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 public class Wall extends Body {
 		
 	private Point mScreenPos = new Point();
-	private int halfWidth;
-	private int halfHeight;
+	private int mHalfWidth;
+	private int mHalfHeight;
+	
 	private GradientDrawable mDrawable;
-	private float mWidth;
+	
+	private float mWidth, mHeight;
 
-	public Wall(float x, float y, float width, float hight) {
+	public Wall(float x, float y, float width, float height) {
 		super(x, y);
 
 		mWidth = width;
+		mHeight = height;
 		
 		// Init physics
 		PolygonShape polyShape = new PolygonShape();
-		polyShape.setAsBox(width / 2.0f, hight / 2.0f);
+		polyShape.setAsBox(width / 2.0f, height / 2.0f);
 		
 		mBody.setType(BodyType.StaticBody);
 		
@@ -53,21 +56,21 @@ public class Wall extends Body {
 		polyShape.dispose();
 		
 		// Init graphics
-		halfWidth = SizeUtil.toScreen(width / 2f);
-		halfHeight = SizeUtil.toScreen(hight / 2f);
+		mHalfWidth = SizeUtil.toScreen(width / 2f);
+		mHalfHeight = SizeUtil.toScreen(height / 2f);
 
 		mDrawable = new GradientDrawable(Orientation.BL_TR, new int[] {0x99333322, 0x99334444, 0x99333322});
 		mDrawable.setShape(GradientDrawable.RECTANGLE);
 		mDrawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-		mDrawable.setSize(halfWidth * 2, halfHeight * 2);
+		mDrawable.setSize(mHalfWidth * 2, mHalfHeight * 2);
 	}
 	
 	@Override
 	public void draw(Canvas canvas) {
 		Vector2 bodyPos = mBody.getPosition();
 		SizeUtil.toScreen(bodyPos.x, bodyPos.y, mScreenPos);
-		mDrawable.setBounds(mScreenPos.x - halfWidth, mScreenPos.y - halfHeight, mScreenPos.x + halfWidth, mScreenPos.y
-				+ halfHeight);
+		mDrawable.setBounds(mScreenPos.x - mHalfWidth, mScreenPos.y - mHalfHeight, mScreenPos.x + mHalfWidth, mScreenPos.y
+				+ mHalfHeight);
 		mDrawable.draw(canvas);
 	}
 	
@@ -76,6 +79,7 @@ public class Wall extends Body {
 		return mDrawable.getBounds().contains(x, y);
 	}
 	
+	@Override
 	public boolean intersects(Rect rect) {
 		return Rect.intersects(mDrawable.getBounds(), rect);
 	}
@@ -95,5 +99,15 @@ public class Wall extends Body {
 	@Override
 	public float getWidth() {
 		return mWidth;
+	}
+	
+	@Override
+	public float getHeight() {
+		return mHeight;
+	}
+	
+	@Override
+	public Rect getScreenBounds() {
+		return mDrawable.getBounds();
 	}
 }

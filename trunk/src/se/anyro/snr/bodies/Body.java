@@ -19,6 +19,7 @@ package se.anyro.snr.bodies;
 import se.anyro.snr.Physics;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -54,6 +55,7 @@ public abstract class Body {
 	}
 	
 	public abstract float getWidth();
+	public abstract float getHeight();
 	
 	public void setPosition(Vector2 position) {
 		mBody.setTransform(position, 0);
@@ -79,4 +81,11 @@ public abstract class Body {
 	public void destroy() {
 		Physics.destroyBody(mBody);
 	}
+
+	public boolean intersects(Rect rect) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public abstract Rect getScreenBounds();
 }
