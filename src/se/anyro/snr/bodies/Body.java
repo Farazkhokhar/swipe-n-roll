@@ -53,6 +53,8 @@ public abstract class Body {
 		return mBody.getPosition();
 	}
 	
+	public abstract float getWidth();
+	
 	public void setPosition(Vector2 position) {
 		mBody.setTransform(position, 0);
 		mBody.setLinearVelocity(ZERO_VELOCITY);

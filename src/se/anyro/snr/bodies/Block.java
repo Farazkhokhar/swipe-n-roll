@@ -26,12 +26,15 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 public class Block extends Body {
 	
-	private float width, hight;
+	private float mWidth, mHeight;
 	
 	private Point screenPos = new Point();
 	
 	public Block(float x, float y, float width, float hight) {
 		super(x, y);
+		
+		mWidth = width;
+		mHeight = hight;
 		
 		// Init physics
 		PolygonShape polyShape = new PolygonShape();
@@ -40,19 +43,21 @@ public class Block extends Body {
 		Fixture fixture = mBody.createFixture(polyShape, 0.1f);
 		fixture.setRestitution(0.2f);		
 		polyShape.dispose();
-		
-		this.width = width;
-		this.hight = hight;
 	}
 	
 	@Override
 	public void draw(Canvas canvas) {
 		Vector2 bodyPos = mBody.getPosition();
 		SizeUtil.toScreen(bodyPos.x, bodyPos.y, screenPos);
-		int halfWidth = SizeUtil.toScreen(width / 2f);
-		int halfHight = SizeUtil.toScreen(hight / 2f);
+		int halfWidth = SizeUtil.toScreen(mWidth / 2f);
+		int halfHight = SizeUtil.toScreen(mHeight / 2f);
 
 		canvas.drawRect(screenPos.x - halfWidth, screenPos.y - halfHight, screenPos.x + halfWidth, screenPos.y
 				+ halfHight, mPaint);
+	}
+
+	@Override
+	public float getWidth() {
+		return mHeight;
 	}
 }

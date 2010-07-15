@@ -19,6 +19,7 @@ package se.anyro.snr.bodies;
 import se.anyro.snr.SizeUtil;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.GradientDrawable.Orientation;
 
@@ -29,14 +30,17 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class Wall extends Body {
 		
-	private Point screenPos = new Point();
+	private Point mScreenPos = new Point();
 	private int halfWidth;
 	private int halfHeight;
 	private GradientDrawable mDrawable;
+	private float mWidth;
 
 	public Wall(float x, float y, float width, float hight) {
 		super(x, y);
 
+		mWidth = width;
+		
 		// Init physics
 		PolygonShape polyShape = new PolygonShape();
 		polyShape.setAsBox(width / 2.0f, hight / 2.0f);
@@ -61,8 +65,8 @@ public class Wall extends Body {
 	@Override
 	public void draw(Canvas canvas) {
 		Vector2 bodyPos = mBody.getPosition();
-		SizeUtil.toScreen(bodyPos.x, bodyPos.y, screenPos);
-		mDrawable.setBounds(screenPos.x - halfWidth, screenPos.y - halfHeight, screenPos.x + halfWidth, screenPos.y
+		SizeUtil.toScreen(bodyPos.x, bodyPos.y, mScreenPos);
+		mDrawable.setBounds(mScreenPos.x - halfWidth, mScreenPos.y - halfHeight, mScreenPos.x + halfWidth, mScreenPos.y
 				+ halfHeight);
 		mDrawable.draw(canvas);
 	}
@@ -70,6 +74,10 @@ public class Wall extends Body {
 	@Override
 	public boolean contains(int x, int y) {
 		return mDrawable.getBounds().contains(x, y);
+	}
+	
+	public boolean intersects(Rect rect) {
+		return Rect.intersects(mDrawable.getBounds(), rect);
 	}
 	
 	@Override
@@ -82,5 +90,10 @@ public class Wall extends Body {
 	public void onTouchEnd() {
 		super.onTouchEnd();
 		mDrawable.setStroke(0, 0);
+	}
+
+	@Override
+	public float getWidth() {
+		return mWidth;
 	}
 }

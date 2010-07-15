@@ -57,11 +57,14 @@ public class GameThread implements Runnable, ContactListener {
 	private Thread mThread;
 	// mThreadSuspended is increased each time we pause and decreased when we resume
     private volatile int mThreadSuspended = 1;
+
     private volatile Point mTouchEvent = null;
     private Point mTouchStart = new Point();
     private Point mTouchMove = new Point();
     private Point mTouchEnd = new Point();
     private Object mTouchLock = new Object();
+	private float mLeftLimit = -10;
+	private float mRightLimit = 10;
 	
 	private State mState = State.INIT;
 	private int mLevel = 1;
@@ -259,11 +262,18 @@ public class GameThread implements Runnable, ContactListener {
 			if (wall.contains(x, y)) {
 				mSwipee = wall;
 				mSwipee.onTouchStart();
+				calculateSwipeLimits();
 				return;
 			}
 		}
 	}
 	
+	private void calculateSwipeLimits() {
+		float halfWidth = mSwipee.getWidth() / 2f;
+		mLeftLimit = -10 + halfWidth;
+		mRightLimit = 10 - halfWidth;
+	}
+
 	private void touchMove() {
 		
 		if (mSwipee == null)
@@ -276,10 +286,10 @@ public class GameThread implements Runnable, ContactListener {
 		// Move one of the walls
 		Vector2 pos = mSwipee.getPosition();
 		pos.x += diffX;
-		if (pos.x < -1.5f)
-			pos.x = -1.5f;
-		else if (pos.x > 1.5f)
-			pos.x = 1.5f;
+		if (pos.x < mLeftLimit)
+			pos.x = mLeftLimit;
+		else if (pos.x > mRightLimit)
+			pos.x = mRightLimit;
 		mSwipee.setPosition(pos);
 		
 		// Remember the new position
@@ -292,6 +302,8 @@ public class GameThread implements Runnable, ContactListener {
 			return;
 		
 		mSwipee.onTouchEnd();
+		
+		mSwipee = null;
 	}
 	
 	private void updatePhysics() {
