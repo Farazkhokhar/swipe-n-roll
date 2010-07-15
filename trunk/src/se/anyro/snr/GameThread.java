@@ -60,6 +60,7 @@ public class GameThread implements Runnable, ContactListener {
     private volatile Point mTouchEvent = null;
     private Point mTouchStart = new Point();
     private Point mTouchMove = new Point();
+    private Point mTouchEnd = new Point();
     private Object mTouchLock = new Object();
 	
 	private State mState = State.INIT;
@@ -155,22 +156,24 @@ public class GameThread implements Runnable, ContactListener {
 
 	public void addTouchEvent(MotionEvent event) {
 		synchronized (mTouchLock) {
+			// Make sure we don't overwrite a touch start
+			// before it's consumed by this thread
+			if (mTouchEvent == mTouchStart)
+				return;
+
 			switch (event.getAction()) {
+			case MotionEvent.ACTION_MOVE:
+				mTouchEvent = mTouchMove;
+				break;
 			case MotionEvent.ACTION_DOWN:
-				mTouchStart.x = (int) event.getX();
-				mTouchStart.y = (int) event.getY();
 				mTouchEvent = mTouchStart;
 				break;
-			case MotionEvent.ACTION_MOVE:
 			case MotionEvent.ACTION_UP:
-				// Make sure we don't overwrite a touch start
-				// before it's consumed by this thread
-				if (mTouchEvent == mTouchStart)
-					return;
-				mTouchMove.x = (int) event.getX();
-				mTouchMove.y = (int) event.getY();
-				mTouchEvent = mTouchMove;
+				mTouchEvent = mTouchEnd;
+				break;
 			}
+			mTouchEvent.x = (int) event.getX();
+			mTouchEvent.y = (int) event.getY();
 		}
 	}
 	
@@ -223,10 +226,12 @@ public class GameThread implements Runnable, ContactListener {
 	private void updateInput() {
 		if (mTouchEvent != null) {
 			synchronized (mTouchLock) {
-				if (mTouchEvent == mTouchStart) {
+				if (mTouchEvent == mTouchMove) {
+					touchMove();
+				} else if (mTouchEvent == mTouchStart) {
 					touchStart();
 				} else {
-					touchMove();
+					touchEnd();
 				}
 				mTouchEvent = null;
 			}
@@ -253,6 +258,7 @@ public class GameThread implements Runnable, ContactListener {
 		for (Body wall : mWalls) {
 			if (wall.contains(x, y)) {
 				mSwipee = wall;
+				mSwipee.onTouchStart();
 				return;
 			}
 		}
@@ -263,7 +269,7 @@ public class GameThread implements Runnable, ContactListener {
 		if (mSwipee == null)
 			return;
 			
-		// User moved finger to a new position or stopped touching the screen
+		// User moved finger to a new position
 		// Calculate how far the finger moved
 		float diffX = SizeUtil.fromScreen(mTouchMove.x - mTouchStart.x);
 		
@@ -281,6 +287,13 @@ public class GameThread implements Runnable, ContactListener {
 		mTouchStart.y = mTouchMove.y;
 	}
 
+	private void touchEnd() {
+		if (mSwipee == null)
+			return;
+		
+		mSwipee.onTouchEnd();
+	}
+	
 	private void updatePhysics() {
 		
 		mPhysics.update();
