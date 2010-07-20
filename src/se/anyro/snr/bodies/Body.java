@@ -18,8 +18,6 @@ package se.anyro.snr.bodies;
 
 import se.anyro.snr.Physics;
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -30,13 +28,13 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
  * and ShapeDrawable.
  */
 public abstract class Body {
+	
 	private Vector2 mStartPos;
-	private static final Vector2 ZERO_VELOCITY = new Vector2(0,0);
+	protected boolean collider = false;
+	private static final Vector2 ZERO_VELOCITY = new Vector2(0, 0);
 	protected com.badlogic.gdx.physics.box2d.Body mBody;
-	protected Paint mPaint = new Paint();
 	
 	public Body(float x, float y) {
-		mPaint.setAntiAlias(true);
 		
 		// Init physics
 		BodyDef bodyDef = new BodyDef();
@@ -54,9 +52,6 @@ public abstract class Body {
 		return mBody.getPosition();
 	}
 	
-	public abstract float getWidth();
-	public abstract float getHeight();
-	
 	public void setPosition(Vector2 position) {
 		mBody.setTransform(position, 0);
 		mBody.setLinearVelocity(ZERO_VELOCITY);
@@ -66,26 +61,13 @@ public abstract class Body {
 		setPosition(mStartPos);
 	}
 	
+	public boolean isCollider() {
+		return collider;
+	}
+	
 	public abstract void draw(Canvas canvas);
 
-	public boolean contains(int x, int y) {
-		return false;
-	}
-
-	public void onTouchStart() {
-	}
-	
-	public void onTouchEnd() {
-	}
-	
 	public void destroy() {
 		Physics.destroyBody(mBody);
 	}
-
-	public boolean intersects(Rect rect) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public abstract Rect getScreenBounds();
 }
