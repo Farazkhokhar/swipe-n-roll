@@ -39,6 +39,14 @@ public class SizeUtil {
     	}
 	}
 	
+	public static int getScreenWidth() {
+		return halfWidth * 2;
+	}
+	
+	public static int getScreenHeight() {
+		return halfHeight * 2;
+	}
+	
 	public static void toScreen(float worldX, float worldY, Point screen) {
 		screen.x = halfWidth + (int) (worldX * scale);
 		screen.y = halfHeight - (int) (worldY * scale);
