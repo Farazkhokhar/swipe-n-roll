@@ -31,6 +31,11 @@ public class Physics {
 
 	private static Vector2 gravity = new Vector2();
 	private static World world = new World(gravity, true);
+	
+	public static int GAME_WIDTH = 20;
+	public static int GAME_HEIGHT = 30;
+	private static int HALF_WIDTH = GAME_WIDTH / 2;
+	private static int HALF_HEIGHT = GAME_HEIGHT / 2;
 
 	public Physics(ContactListener listener) {
 		world.setContactListener(listener);
@@ -40,22 +45,22 @@ public class Physics {
 		bodyDef.type = BodyType.StaticBody;
 		
 		// Upper wall
-		wallShape.setAsEdge(new Vector2(-10, 15), new Vector2(10, 15));		
+		wallShape.setAsEdge(new Vector2(-HALF_WIDTH, HALF_HEIGHT), new Vector2(HALF_WIDTH, HALF_HEIGHT));		
 		com.badlogic.gdx.physics.box2d.Body body = world.createBody(bodyDef);
 		body.createFixture(wallShape, 0);
 		
 		// Right wall
-		wallShape.setAsEdge(new Vector2(10, 15), new Vector2(10, -15));		
+		wallShape.setAsEdge(new Vector2(HALF_WIDTH, HALF_HEIGHT), new Vector2(HALF_WIDTH, -HALF_HEIGHT));		
 		body = world.createBody(bodyDef);
 		body.createFixture(wallShape, 0);
 
 		// Lower wall
-		wallShape.setAsEdge(new Vector2(10, -15), new Vector2(-10, -15));		
+		wallShape.setAsEdge(new Vector2(HALF_WIDTH, -HALF_HEIGHT), new Vector2(-HALF_WIDTH, -HALF_HEIGHT));		
 		body = world.createBody(bodyDef);
 		body.createFixture(wallShape, 0);
 
 		// Left wall
-		wallShape.setAsEdge(new Vector2(-10, -15), new Vector2(-10, 15));		
+		wallShape.setAsEdge(new Vector2(-HALF_WIDTH, -HALF_HEIGHT), new Vector2(-HALF_WIDTH, HALF_HEIGHT));		
 		body = world.createBody(bodyDef);
 		body.createFixture(wallShape, 0);
 
@@ -71,8 +76,8 @@ public class Physics {
 			timeDiff = timeStep;
 		}
 		
-		gravity.x = -Accelerometer.getX() * 10;
-		gravity.y = -Accelerometer.getY() * 10;
+		gravity.x = -Accelerometer.getX() * 15;
+		gravity.y = -Accelerometer.getY() * 15;
 		world.setGravity(gravity);
 		
 		world.step(timeDiff, iterations, iterations);
