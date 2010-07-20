@@ -16,98 +16,54 @@
 
 package se.anyro.snr.bodies;
 
-import se.anyro.snr.SizeUtil;
-import android.graphics.Canvas;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.GradientDrawable.Orientation;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-
-public class Wall extends Body {
+public class Wall extends Rectangle {
 		
-	private Point mScreenPos = new Point();
-	private int mHalfWidth;
-	private int mHalfHeight;
+	private static final int HIGHLIGHT_COLOR = 0x66ffff00;
+	private static final int STROKE_COLOR = 0xff333333;
 	
-	private GradientDrawable mDrawable;
-	
-	private float mWidth, mHeight;
+	private WallOrientation mOrientation;
+
+	public enum WallOrientation {
+		HORIZONTAL,
+		VERTICAL,
+		NONE
+	}
 
 	public Wall(float x, float y, float width, float height) {
-		super(x, y);
-
-		mWidth = width;
-		mHeight = height;
+		super(x, y, width, height, false);
 		
-		// Init physics
-		PolygonShape polyShape = new PolygonShape();
-		polyShape.setAsBox(width / 2.0f, height / 2.0f);
-		
-		mBody.setType(BodyType.StaticBody);
-		
-		Fixture fixture = mBody.createFixture(polyShape, 0.1f);
-		fixture.setRestitution(0.2f);		
-		
-		polyShape.dispose();
+		if (width > height) {
+			mOrientation = WallOrientation.HORIZONTAL;
+		} else if (height > width) {
+			mOrientation = WallOrientation.VERTICAL;
+		} else {
+			mOrientation = WallOrientation.NONE;
+		}
 		
 		// Init graphics
-		mHalfWidth = SizeUtil.toScreen(width / 2f);
-		mHalfHeight = SizeUtil.toScreen(height / 2f);
-
 		mDrawable = new GradientDrawable(Orientation.BL_TR, new int[] {0x99333322, 0x99334444, 0x99333322});
 		mDrawable.setShape(GradientDrawable.RECTANGLE);
 		mDrawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
 		mDrawable.setSize(mHalfWidth * 2, mHalfHeight * 2);
+		mDrawable.setStroke(1, STROKE_COLOR);
 	}
 	
-	@Override
-	public void draw(Canvas canvas) {
-		Vector2 bodyPos = mBody.getPosition();
-		SizeUtil.toScreen(bodyPos.x, bodyPos.y, mScreenPos);
-		mDrawable.setBounds(mScreenPos.x - mHalfWidth, mScreenPos.y - mHalfHeight, mScreenPos.x + mHalfWidth, mScreenPos.y
-				+ mHalfHeight);
-		mDrawable.draw(canvas);
-	}
-	
-	@Override
 	public boolean contains(int x, int y) {
 		return mDrawable.getBounds().contains(x, y);
 	}
 	
-	@Override
-	public boolean intersects(Rect rect) {
-		return Rect.intersects(mDrawable.getBounds(), rect);
-	}
-	
-	@Override
 	public void onTouchStart() {
-		super.onTouchStart();
-		mDrawable.setStroke(1, 0x66ffff00);
+		mDrawable.setStroke(1, HIGHLIGHT_COLOR);
 	}
 	
-	@Override
 	public void onTouchEnd() {
-		super.onTouchEnd();
-		mDrawable.setStroke(0, 0);
+		mDrawable.setStroke(1, STROKE_COLOR);
 	}
 
-	@Override
-	public float getWidth() {
-		return mWidth;
-	}
-	
-	@Override
-	public float getHeight() {
-		return mHeight;
-	}
-	
-	@Override
-	public Rect getScreenBounds() {
-		return mDrawable.getBounds();
+	public WallOrientation getOrientation() {
+		return mOrientation;
 	}
 }

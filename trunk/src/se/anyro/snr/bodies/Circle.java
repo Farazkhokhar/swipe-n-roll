@@ -19,7 +19,6 @@ package se.anyro.snr.bodies;
 import se.anyro.snr.SizeUtil;
 import android.graphics.Canvas;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
 
 import com.badlogic.gdx.math.Vector2;
@@ -57,6 +56,11 @@ public abstract class Circle extends Body {
 		mDrawable.setShape(GradientDrawable.OVAL);
         mDrawable.setGradientType(GradientDrawable.RADIAL_GRADIENT);
 		mDrawable.setGradientRadius(mScreenRadius * 2);
+		if (isHole) {
+			mDrawable.setGradientCenter(0.46f, 0.54f);
+		} else {
+			mDrawable.setGradientCenter(0.54f, 0.46f);
+		}
 	}
 
 	@Override
@@ -67,20 +71,5 @@ public abstract class Circle extends Body {
 		mDrawable.setBounds(mScreenPos.x - mScreenRadius, mScreenPos.y - mScreenRadius, mScreenPos.x + mScreenRadius,
 				mScreenPos.y + mScreenRadius);
 		mDrawable.draw(canvas);
-	}
-	
-	@Override
-	public float getWidth() {
-		return mDiameter;
-	}	
-
-	@Override
-	public float getHeight() {
-		return mDiameter;
-	}
-	
-	@Override
-	public Rect getScreenBounds() {
-		return mDrawable.getBounds();
 	}
 }

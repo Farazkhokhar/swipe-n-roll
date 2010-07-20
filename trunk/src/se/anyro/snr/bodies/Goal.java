@@ -16,12 +16,11 @@
 
 package se.anyro.snr.bodies;
 
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-
 public class Goal extends Circle {
 	
 	public Goal(float x, float y) {
 		super(x, y, 1.1f, true, 0xff449944, 0xff112211);
-		mBody.setType(BodyType.StaticBody);
+		
+		collider = true;
 	}
 }

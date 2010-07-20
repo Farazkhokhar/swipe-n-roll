@@ -20,8 +20,8 @@ import java.util.ArrayList;
 
 import se.anyro.snr.bodies.Body;
 import se.anyro.snr.bodies.Goal;
-import se.anyro.snr.bodies.Hole;
 import se.anyro.snr.bodies.Wall;
+import se.anyro.snr.bodies.Water;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -45,8 +45,8 @@ public class GameThread implements Runnable, ContactListener {
 	
 	private GradientDrawable mBackground;
 	private ArrayList<Body> mBodies = new ArrayList<Body>();
-	private ArrayList<Body> mWalls= new ArrayList<Body>();
-	private Body mSwipee;
+	private ArrayList<Wall> mWalls= new ArrayList<Wall>();
+	private Wall mSwipee;
 	
 	private SurfaceHolder mSurfaceHolder;
 	private Handler mHandler;
@@ -66,8 +66,8 @@ public class GameThread implements Runnable, ContactListener {
     
 	private float mLeftLimit = -10;
 	private float mRightLimit = 10;
-	private Rect mLeftBounds = new Rect();
-	private Rect mRightBounds = new Rect();
+	private float mTopLimit = 15;
+	private float mBottomLimit = -15;
 	
 	private State mState = State.INIT;
 	private int mLevel = 1;
@@ -82,11 +82,11 @@ public class GameThread implements Runnable, ContactListener {
 	
     private class Collision {
 
-    	public Body ball, hole;
+    	public Body ball, collider;
 
-    	public Collision(Body ball, Body hole) {
+    	public Collision(Body ball, Body collider) {
     		this.ball = ball;
-    		this.hole = hole;
+    		this.collider = collider;
     	}
     }
     
@@ -157,7 +157,7 @@ public class GameThread implements Runnable, ContactListener {
 		mBodies.add(body);
 		
 		if (body instanceof Wall)
-			mWalls.add(body);
+			mWalls.add((Wall) body);
 	}
 
 	public void addTouchEvent(MotionEvent event) {
@@ -261,28 +261,35 @@ public class GameThread implements Runnable, ContactListener {
 		int y = mTouchStart.y;
 		
 		// Check if a swipeable body is being touched
-		for (Body wall : mWalls) {
+		for (Wall wall : mWalls) {
 			if (wall.contains(x, y)) {
 				mSwipee = wall;
 				mSwipee.onTouchStart();
-				calculateSwipeLimits();
+				switch (mSwipee.getOrientation()) {
+				case HORIZONTAL:
+					calculateHorizontalSwipeLimits();
+					break;
+				case VERTICAL:
+					calculateVerticalSwipeLimits();
+					break;
+				}
 				return;
 			}
 		}
 	}
 	
-	private void calculateSwipeLimits() {
+	private void calculateHorizontalSwipeLimits() {
 		float halfWidth = mSwipee.getWidth() / 2f;
 		mLeftLimit = -10 + halfWidth;
 		mRightLimit = 10 - halfWidth;
 		
 		Rect swipeeBounds = mSwipee.getScreenBounds();
 		
-		for (Body body : mWalls) {
-			if (body == mSwipee)
+		for (Wall wall : mWalls) {
+			if (wall == mSwipee)
 				continue;
 
-			Rect bounds = body.getScreenBounds();
+			Rect bounds = wall.getScreenBounds();
 			
 			// Check vertical intersection
 			if (bounds.top < swipeeBounds.bottom && bounds.bottom > swipeeBounds.top) {
@@ -303,11 +310,54 @@ public class GameThread implements Runnable, ContactListener {
 		}
 	}
 
+	private void calculateVerticalSwipeLimits() {
+		float halfHeight = mSwipee.getHeight() / 2f;
+		mTopLimit = 15 - halfHeight;
+		mBottomLimit = -15 + halfHeight;
+		
+		Rect swipeeBounds = mSwipee.getScreenBounds();
+		
+		for (Wall wall : mWalls) {
+			if (wall == mSwipee)
+				continue;
+
+			Rect bounds = wall.getScreenBounds();
+			
+			// Check Horizontal intersection
+			if (bounds.left < swipeeBounds.right && bounds.right > swipeeBounds.left) {
+				if (bounds.top > swipeeBounds.bottom) {
+					// Calculate new bottom limit
+					int diff = bounds.top - swipeeBounds.bottom;
+					float newBottomLimit = mSwipee.getPosition().y - SizeUtil.fromScreen(diff - 1);
+					if (newBottomLimit > mBottomLimit)
+						mBottomLimit = newBottomLimit;
+				} else if (bounds.bottom < swipeeBounds.top) {
+					// Calculate new top limit
+					int diff = swipeeBounds.top - bounds.bottom;
+					float newtopLimit = mSwipee.getPosition().y + SizeUtil.fromScreen(diff - 1);
+					if (newtopLimit < mTopLimit)
+						mTopLimit = newtopLimit;
+				}
+			}
+		}
+	}
+
 	private void touchMove() {
 		
 		if (mSwipee == null)
 			return;
 			
+		switch (mSwipee.getOrientation()) {
+		case HORIZONTAL:
+			moveHorizontal();
+			break;
+		case VERTICAL:
+			moveVertical();
+			break;
+		}
+	}
+
+	private void moveHorizontal() {
 		// User moved finger to a new position
 		// Calculate how far the finger moved
 		float diffX = SizeUtil.fromScreen(mTouchMove.x - mTouchStart.x);
@@ -323,9 +373,26 @@ public class GameThread implements Runnable, ContactListener {
 		
 		// Remember the new position
 		mTouchStart.x = mTouchMove.x;
+	}
+	
+	private void moveVertical() {
+		// User moved finger to a new position
+		// Calculate how far the finger moved
+		float diffY = SizeUtil.fromScreen(mTouchMove.y - mTouchStart.y);
+		
+		// Move one of the walls
+		Vector2 pos = mSwipee.getPosition();
+		pos.y -= diffY;
+		if (pos.y > mTopLimit)
+			pos.y = mTopLimit;
+		else if (pos.y < mBottomLimit)
+			pos.y = mBottomLimit;
+		mSwipee.setPosition(pos);
+		
+		// Remember the new position
 		mTouchStart.y = mTouchMove.y;
 	}
-
+	
 	private void touchEnd() {
 		if (mSwipee == null)
 			return;
@@ -341,10 +408,14 @@ public class GameThread implements Runnable, ContactListener {
 		
 		if (mCollision != null) {
 			
-			// Make ball go inte the hole
-			mCollision.ball.setPosition(mCollision.hole.getPosition());
+			if (mCollision.collider instanceof Water) {
+				// TODO: Make the ball go into the water
+			} else {
+				// Make the ball go inte the hole
+				mCollision.ball.setPosition(mCollision.collider.getPosition());
+			}
 			
-			if (mCollision.hole instanceof Goal) {
+			if (mCollision.collider instanceof Goal) {
 				mState = State.WIN;
 				if (mLevel < Level.count()) {
 					++mLevel; 
@@ -376,12 +447,17 @@ public class GameThread implements Runnable, ContactListener {
 	@Override
 	public void beginContact(Contact contact) {
 		Body body1 = (Body) contact.getFixtureA().getBody().getUserData();
+		if (body1 == null)
+			return;
+		
 		Body body2 = (Body) contact.getFixtureB().getBody().getUserData();
-
+		if (body2 == null)
+			return;
+		
 		// For now we only care about collision with holes and the goal
-		if (body1 instanceof Hole || body1 instanceof Goal) {
+		if (body1.isCollider()) {
 			mCollision = new Collision(body2, body1);
-		} else if (body2 instanceof Hole || body2 instanceof Goal) {
+		} else if (body2.isCollider()) {
 			mCollision = new Collision(body1, body2);
 		}
 	}
