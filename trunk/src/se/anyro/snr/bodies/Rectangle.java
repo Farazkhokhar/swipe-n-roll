@@ -19,6 +19,7 @@ public abstract class Rectangle extends Body {
 	protected GradientDrawable mDrawable;
 	
 	private float mWidth, mHeight;
+	protected Fixture mFixture;
 
 	public Rectangle(float x, float y, float width, float height, boolean innerCollision) {
 		super(x, y);
@@ -33,8 +34,8 @@ public abstract class Rectangle extends Body {
 		else
 			polyShape.setAsBox(width / 2f, height / 2f);
 		
-		Fixture fixture = mBody.createFixture(polyShape, 0.1f);
-		fixture.setRestitution(0.2f);		
+		mFixture = mBody.createFixture(polyShape, 0.1f);
+		mFixture.setRestitution(0.2f);		
 		
 		polyShape.dispose();
 		
