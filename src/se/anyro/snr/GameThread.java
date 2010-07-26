@@ -163,13 +163,12 @@ public class GameThread implements Runnable, ContactListener {
 
 	public void addTouchEvent(MotionEvent event) {
 		synchronized (mTouchLock) {
-			// Make sure we don't overwrite a touch start
-			// before it's consumed by this thread
-			if (mTouchEvent == mTouchStart)
-				return;
-
 			switch (event.getAction()) {
 			case MotionEvent.ACTION_MOVE:
+				// Make sure we don't overwrite a touch start
+				// before it's consumed by this thread
+				if (mTouchEvent == mTouchStart)
+					return;
 				mTouchEvent = mTouchMove;
 				break;
 			case MotionEvent.ACTION_DOWN:
