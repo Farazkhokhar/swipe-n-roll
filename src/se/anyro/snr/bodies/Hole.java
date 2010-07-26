@@ -23,7 +23,7 @@ public class Hole extends Circle {
 	public Hole(float x, float y) {
 		super(x, y, 1.1f, true, 0xff555555, 0xff111111);
 		
-		collider = true;
+		mCollider = true;
 		
 		mBody.setType(BodyType.StaticBody);
 	}

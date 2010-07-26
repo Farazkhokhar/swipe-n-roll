@@ -21,6 +21,6 @@ public class Goal extends Circle {
 	public Goal(float x, float y) {
 		super(x, y, 1.1f, true, 0xff449944, 0xff112211);
 		
-		collider = true;
+		mCollider = true;
 	}
 }

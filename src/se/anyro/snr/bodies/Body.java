@@ -30,8 +30,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 public abstract class Body {
 	
 	private Vector2 mStartPos;
-	protected boolean collider = false;
-	private static final Vector2 ZERO_VELOCITY = new Vector2(0, 0);
+	protected boolean mCollider = false;
+	private static final Vector2 ZERO_VECTOR = new Vector2(0, 0);
 	protected com.badlogic.gdx.physics.box2d.Body mBody;
 	
 	public Body(float x, float y) {
@@ -54,7 +54,7 @@ public abstract class Body {
 	
 	public void setPosition(Vector2 position) {
 		mBody.setTransform(position, 0);
-		mBody.setLinearVelocity(ZERO_VELOCITY);
+		mBody.setLinearVelocity(ZERO_VECTOR);
 	}
 	
 	public void reset() {
@@ -62,12 +62,16 @@ public abstract class Body {
 	}
 	
 	public boolean isCollider() {
-		return collider;
+		return mCollider;
 	}
 	
 	public abstract void draw(Canvas canvas);
 
 	public void destroy() {
 		Physics.destroyBody(mBody);
+	}
+
+	public void applyforce(Vector2 force) {
+		mBody.applyForce(force, ZERO_VECTOR);
 	}
 }

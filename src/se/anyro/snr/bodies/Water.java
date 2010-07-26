@@ -9,7 +9,7 @@ public class Water extends Rectangle {
 	public Water(float x, float y, float width, float height) {
 		super(x, y, width, height, true);
 		
-		collider = true;
+		mCollider = true;
 		
 		// Init graphics
 		mDrawable = new GradientDrawable(Orientation.BL_TR, new int[] {0xff3333cc, 0xff5555cc, 0xff3333cc});

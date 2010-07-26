@@ -19,9 +19,10 @@ package se.anyro.snr;
 import java.util.ArrayList;
 
 import se.anyro.snr.bodies.Body;
+import se.anyro.snr.bodies.Bridge;
+import se.anyro.snr.bodies.Circle;
 import se.anyro.snr.bodies.Goal;
 import se.anyro.snr.bodies.Wall;
-import se.anyro.snr.bodies.Water;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -408,14 +409,14 @@ public class GameThread implements Runnable, ContactListener {
 		
 		if (mCollision != null) {
 			
-			if (mCollision.collider instanceof Water) {
-				// TODO: Make the ball go into the water
-			} else {
-				// Make the ball go inte the hole
+			if (mCollision.collider instanceof Circle) {
 				mCollision.ball.setPosition(mCollision.collider.getPosition());
 			}
 			
-			if (mCollision.collider instanceof Goal) {
+			if (mCollision.collider instanceof Bridge) {
+				Bridge bridge = (Bridge) mCollision.collider;
+				bridge.collision(mCollision.ball);
+			} else if (mCollision.collider instanceof Goal) {
 				mState = State.WIN;
 				if (mLevel < Level.count()) {
 					++mLevel; 
@@ -424,11 +425,12 @@ public class GameThread implements Runnable, ContactListener {
 					mLevel = 1;
 					mHandler.sendEmptyMessage(COMPLETED);
 				}
+				mCollision = null;
 			} else {
 				mState = State.GAME_OVER;
 				mHandler.sendEmptyMessage(GAME_OVER);
+				mCollision = null;
 			}
-			mCollision = null;
 		}
 	}
 
@@ -454,7 +456,6 @@ public class GameThread implements Runnable, ContactListener {
 		if (body2 == null)
 			return;
 		
-		// For now we only care about collision with holes and the goal
 		if (body1.isCollider()) {
 			mCollision = new Collision(body2, body1);
 		} else if (body2.isCollider()) {
@@ -465,5 +466,16 @@ public class GameThread implements Runnable, ContactListener {
 	// Collision ended
 	@Override
 	public void endContact(Contact contact) {
+		Body body1 = (Body) contact.getFixtureA().getBody().getUserData();
+		if (body1 == null)
+			return;
+		
+		Body body2 = (Body) contact.getFixtureB().getBody().getUserData();
+		if (body2 == null)
+			return;
+		
+		if (body1.isCollider() || body2.isCollider()) {
+			mCollision = null;
+		}
 	}
 }
