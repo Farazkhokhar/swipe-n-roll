@@ -38,19 +38,20 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 
 public class GameThread implements Runnable, ContactListener {
 	
+	// Events sent to the activity
 	public static final int START = 0;
 	public static final int WIN = 1;
 	public static final int GAME_OVER = 2;
 	public static final int COMPLETED = 3;
 	public static final int PAUSED = 4;
 	
+	private SurfaceHolder mSurfaceHolder;
+	private Handler mHandler;
+	
 	private GradientDrawable mBackground;
 	private ArrayList<Body> mBodies = new ArrayList<Body>();
 	private ArrayList<Wall> mWalls= new ArrayList<Wall>();
-	private Wall mSwipee;
-	
-	private SurfaceHolder mSurfaceHolder;
-	private Handler mHandler;
+	private Wall mSwipee; // The wall being swiped
 	
 	private Physics mPhysics;
 	private Collision mCollision;
