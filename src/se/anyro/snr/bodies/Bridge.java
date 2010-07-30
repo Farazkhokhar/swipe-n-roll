@@ -16,10 +16,11 @@ public class Bridge extends Rectangle {
 		mFixture.setSensor(true);
 		
 		// Init graphics
-		mDrawable = new GradientDrawable(Orientation.TOP_BOTTOM, new int[] {0x00ffffff, 0x33ffffff, 0x00ffffff});
-		mDrawable.setShape(GradientDrawable.RECTANGLE);
-		mDrawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-		mDrawable.setSize(mHalfWidth * 2, mHalfHeight * 2);
+		GradientDrawable gradient = new GradientDrawable(Orientation.TOP_BOTTOM, new int[] {0x00ffffff, 0x33ffffff, 0x00ffffff});
+		gradient.setShape(GradientDrawable.RECTANGLE);
+		gradient.setGradientType(GradientDrawable.LINEAR_GRADIENT);
+		gradient.setSize(mHalfWidth * 2, mHalfHeight * 2);
+		mDrawable = gradient;
 	}
 
 	public void collision(Body ball) {

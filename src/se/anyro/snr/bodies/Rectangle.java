@@ -4,8 +4,7 @@ import se.anyro.snr.SizeUtil;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.GradientDrawable.Orientation;
+import android.graphics.drawable.Drawable;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -16,7 +15,7 @@ public abstract class Rectangle extends Body {
 	protected Point mScreenPos = new Point();
 	protected int mHalfWidth, mHalfHeight;
 	
-	protected GradientDrawable mDrawable;
+	protected Drawable mDrawable;
 	
 	private float mWidth, mHeight;
 	protected Fixture mFixture;
@@ -42,11 +41,6 @@ public abstract class Rectangle extends Body {
 		// Init graphics
 		mHalfWidth = SizeUtil.toScreen(width / 2f);
 		mHalfHeight = SizeUtil.toScreen(height / 2f);
-
-		mDrawable = new GradientDrawable(Orientation.BL_TR, new int[] {0xff3333ff, 0xff3344ff, 0xff3333ff});
-		mDrawable.setShape(GradientDrawable.RECTANGLE);
-		mDrawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-		mDrawable.setSize(mHalfWidth * 2, mHalfHeight * 2);
 	}
 
 	@Override
