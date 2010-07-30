@@ -17,6 +17,7 @@
 package se.anyro.snr;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +45,9 @@ public class SwipeNRoll extends Activity {
 	private GameThread mGameThread;
 	
 	private boolean mStarted = false;
+
+	// I know this is ugly. If you know how to fix it let me know.
+	public static Resources resources;
 	
 	// Handler for receiving messages from the game thread in order to
 	// display messages on top of the game view.
@@ -85,6 +89,8 @@ public class SwipeNRoll extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        resources = getResources();
         
         makeFullScreen();
         
