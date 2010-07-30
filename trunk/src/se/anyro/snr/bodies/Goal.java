@@ -16,10 +16,15 @@
 
 package se.anyro.snr.bodies;
 
+import se.anyro.snr.R;
+import se.anyro.snr.SwipeNRoll;
+
 public class Goal extends Circle {
 	
 	public Goal(float x, float y) {
-		super(x, y, 1.1f, true, 0xff449944, 0xff112211);
+		super(x, y, 1.1f, true);
+		
+		mDrawable = SwipeNRoll.resources.getDrawable(R.drawable.goal);
 		
 		mCollider = true;
 	}

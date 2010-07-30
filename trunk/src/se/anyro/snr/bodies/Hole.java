@@ -16,12 +16,17 @@
 
 package se.anyro.snr.bodies;
 
+import se.anyro.snr.R;
+import se.anyro.snr.SwipeNRoll;
+
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class Hole extends Circle {
 	
 	public Hole(float x, float y) {
-		super(x, y, 1.1f, true, 0xff555555, 0xff111111);
+		super(x, y, 1.1f, true);
+		
+		mDrawable = SwipeNRoll.resources.getDrawable(R.drawable.hole);
 		
 		mCollider = true;
 		

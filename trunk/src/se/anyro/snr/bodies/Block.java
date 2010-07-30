@@ -34,10 +34,11 @@ public class Block extends Rectangle {
 		mBody.setType(BodyType.DynamicBody);
 		
 		// Init graphics
-		mDrawable = new GradientDrawable(Orientation.BL_TR, new int[] {0x99333322, 0x99334444, 0x99333322});
-		mDrawable.setShape(GradientDrawable.RECTANGLE);
-		mDrawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-		mDrawable.setSize(mHalfWidth * 2, mHalfHeight * 2);
+		GradientDrawable gradient = new GradientDrawable(Orientation.BL_TR, new int[] {0x99333322, 0x99334444, 0x99333322});
+		gradient.setShape(GradientDrawable.RECTANGLE);
+		gradient.setGradientType(GradientDrawable.LINEAR_GRADIENT);
+		gradient.setSize(mHalfWidth * 2, mHalfHeight * 2);
+		mDrawable = gradient;
 	}
 	
 	@Override

@@ -16,6 +16,9 @@
 
 package se.anyro.snr.bodies;
 
+import se.anyro.snr.R;
+import se.anyro.snr.SwipeNRoll;
+
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class Ball extends Circle {
@@ -23,7 +26,10 @@ public class Ball extends Circle {
 	private static final float RADIUS = 1;
 	
 	public Ball(int x, int y) {
-		super(x, y, RADIUS, false, 0xff6666cc, 0xff111155);
+		super(x, y, RADIUS, false);
+		
+		mDrawable = SwipeNRoll.resources.getDrawable(R.drawable.ball);
+
 		mBody.setType(BodyType.DynamicBody);
 		mFixture.setRestitution(0.4f);
 	}

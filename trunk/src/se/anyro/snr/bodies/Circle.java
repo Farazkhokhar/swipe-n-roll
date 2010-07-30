@@ -19,7 +19,7 @@ package se.anyro.snr.bodies;
 import se.anyro.snr.SizeUtil;
 import android.graphics.Canvas;
 import android.graphics.Point;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.Drawable;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -28,15 +28,12 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 public abstract class Circle extends Body {
 
 	protected Fixture mFixture;
-	private GradientDrawable mDrawable;
+	protected Drawable mDrawable;
 	private Point mScreenPos = new Point();
 	private int mScreenRadius;
-	private float mDiameter;
 	
-	public Circle(float x, float y, float radius, boolean isHole, int innerColor, int outerColor) {
+	public Circle(float x, float y, float radius, boolean isHole) {
 		super(x, y);
-		
-		mDiameter = 2 * radius;
 		
 		// Init physics
 		CircleShape circleShape = new CircleShape();
@@ -51,16 +48,6 @@ public abstract class Circle extends Body {
 
 		// Init graphics
 		mScreenRadius = SizeUtil.toScreen(radius);
-		mDrawable = new GradientDrawable(GradientDrawable.Orientation.TL_BR,
-                new int[] { innerColor, outerColor });
-		mDrawable.setShape(GradientDrawable.OVAL);
-        mDrawable.setGradientType(GradientDrawable.RADIAL_GRADIENT);
-		mDrawable.setGradientRadius(mScreenRadius * 2);
-		if (isHole) {
-			mDrawable.setGradientCenter(0.46f, 0.54f);
-		} else {
-			mDrawable.setGradientCenter(0.54f, 0.46f);
-		}
 	}
 
 	@Override

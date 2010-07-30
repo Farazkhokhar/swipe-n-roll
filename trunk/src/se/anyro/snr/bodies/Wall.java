@@ -16,15 +16,15 @@
 
 package se.anyro.snr.bodies;
 
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.GradientDrawable.Orientation;
+import se.anyro.snr.R;
+import se.anyro.snr.SwipeNRoll;
+import android.graphics.drawable.Drawable;
 
 public class Wall extends Rectangle {
-		
-	private static final int HIGHLIGHT_COLOR = 0x66ffff00;
-	private static final int STROKE_COLOR = 0xff333333;
 	
 	private WallOrientation mOrientation;
+	
+	protected Drawable normalImage, pressedImage;
 
 	public enum WallOrientation {
 		HORIZONTAL,
@@ -44,11 +44,9 @@ public class Wall extends Rectangle {
 		}
 		
 		// Init graphics
-		mDrawable = new GradientDrawable(Orientation.BL_TR, new int[] {0x99333322, 0x99334444, 0x99333322});
-		mDrawable.setShape(GradientDrawable.RECTANGLE);
-		mDrawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-		mDrawable.setSize(mHalfWidth * 2, mHalfHeight * 2);
-		mDrawable.setStroke(1, STROKE_COLOR);
+		normalImage = SwipeNRoll.resources.getDrawable(R.drawable.wall_normal);
+		pressedImage = SwipeNRoll.resources.getDrawable(R.drawable.wall_pressed);
+		mDrawable = normalImage;
 	}
 	
 	public boolean contains(int x, int y) {
@@ -56,11 +54,13 @@ public class Wall extends Rectangle {
 	}
 	
 	public void onTouchStart() {
-		mDrawable.setStroke(1, HIGHLIGHT_COLOR);
+		pressedImage.setBounds(normalImage.getBounds());
+		mDrawable = pressedImage;
 	}
 	
 	public void onTouchEnd() {
-		mDrawable.setStroke(1, STROKE_COLOR);
+		normalImage.setBounds(pressedImage.getBounds());
+		mDrawable = normalImage;
 	}
 
 	public WallOrientation getOrientation() {
