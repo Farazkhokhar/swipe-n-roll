@@ -22,12 +22,12 @@ import se.anyro.snr.bodies.Body;
 import se.anyro.snr.bodies.Bridge;
 import se.anyro.snr.bodies.Circle;
 import se.anyro.snr.bodies.Goal;
+import se.anyro.snr.bodies.SquareHole;
 import se.anyro.snr.bodies.Wall;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.GradientDrawable.Orientation;
+import android.graphics.drawable.PaintDrawable;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -48,7 +48,7 @@ public class GameThread implements Runnable, ContactListener {
 	private SurfaceHolder mSurfaceHolder;
 	private Handler mHandler;
 	
-	private GradientDrawable mBackground;
+	private PaintDrawable mBackground;
 	private ArrayList<Body> mBodies = new ArrayList<Body>();
 	private ArrayList<Wall> mWalls= new ArrayList<Wall>();
 	private Wall mSwipee; // The wall being swiped
@@ -124,10 +124,7 @@ public class GameThread implements Runnable, ContactListener {
 			bounds.bottom -= bounds.top;
     	}
 
-		mBackground = new GradientDrawable(Orientation.TL_BR, new int[] {0xff777766, 0xff556666, 0xff777766});
-		mBackground.setShape(GradientDrawable.RECTANGLE);
-		mBackground.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-		mBackground.setSize(width, height);
+		mBackground = new PaintDrawable(0xff464646);
 		mBackground.setBounds(bounds);
 	}
 
@@ -409,14 +406,38 @@ public class GameThread implements Runnable, ContactListener {
 		
 		if (mCollision != null) {
 			
-			if (mCollision.collider instanceof Circle) {
-				mCollision.ball.setPosition(mCollision.collider.getPosition());
+			Body collider = mCollision.collider;
+			Body ball = mCollision.ball;
+			
+			if (collider instanceof Circle) {
+				ball.setPosition(collider.getPosition());
+			} else if (collider instanceof SquareHole) {
+				SquareHole hole = (SquareHole) collider;
+				float x = ball.getPosition().x;
+				float minX = hole.getPosition().x - hole.getWidth() / 2f + 1f;
+				if (x < minX) {
+					x = minX;
+				} else {
+					float maxX = hole.getPosition().x + hole.getWidth() / 2f - 1f;
+					if (x > maxX)
+						x = maxX;
+				}
+				float y = ball.getPosition().y;
+				float minY = hole.getPosition().y - hole.getHeight() / 2f + 1f;
+				if (y < minY) {
+					y = minY;
+				} else {
+					float maxY = hole.getPosition().y + hole.getHeight() / 2f - 1f;
+					if (y > maxY)
+						y = maxY;
+				}
+				ball.setPosition(new Vector2(x, y));
 			}
 			
-			if (mCollision.collider instanceof Bridge) {
-				Bridge bridge = (Bridge) mCollision.collider;
-				bridge.collision(mCollision.ball);
-			} else if (mCollision.collider instanceof Goal) {
+			if (collider instanceof Bridge) {
+				Bridge bridge = (Bridge) collider;
+				bridge.collision(ball);
+			} else if (collider instanceof Goal) {
 				mState = State.WIN;
 				if (mLevel < Level.count()) {
 					++mLevel; 
