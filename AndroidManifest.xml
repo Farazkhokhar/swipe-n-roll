@@ -16,8 +16,8 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="se.anyro.snr"
-      android:versionCode="2"
-      android:versionName="0.1">
+      android:versionCode="4"
+      android:versionName="0.3">
     <supports-screens
       android:largeScreens="true"
       android:normalScreens="true"
