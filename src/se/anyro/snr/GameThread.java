@@ -175,6 +175,8 @@ public class GameThread implements Runnable, ContactListener {
 			case MotionEvent.ACTION_UP:
 				mTouchEvent = mTouchEnd;
 				break;
+			default:
+				return;
 			}
 			mTouchEvent.x = (int) event.getX();
 			mTouchEvent.y = (int) event.getY();
