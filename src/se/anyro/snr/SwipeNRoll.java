@@ -77,7 +77,7 @@ public class SwipeNRoll extends Activity {
 	});
 
 	private void hideText() {
-		mMessageGroup.setVisibility(View.INVISIBLE);
+		mMessageGroup.setVisibility(View.GONE);
 	}
 	
 	private void showText(int bigTextId, int smallTextId) {
