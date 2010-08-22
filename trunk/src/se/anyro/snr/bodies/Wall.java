@@ -18,13 +18,17 @@ package se.anyro.snr.bodies;
 
 import se.anyro.snr.R;
 import se.anyro.snr.SwipeNRoll;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.drawable.Drawable;
 
 public class Wall extends Rectangle {
 	
 	private WallOrientation mOrientation;
-	
-	protected Drawable normalImage, pressedImage;
+	private String mText;
+	protected Drawable mNormalImage, mPressedImage;
+	private Paint mTextPaint;
 
 	public enum WallOrientation {
 		HORIZONTAL,
@@ -35,6 +39,12 @@ public class Wall extends Rectangle {
 	public Wall(float x, float y, float width, float height) {
 		super(x, y, width, height, false);
 		
+		mTextPaint = new Paint();
+		mTextPaint.setColor(0xffffff00);
+		mTextPaint.setAntiAlias(true);
+		mTextPaint.setTextAlign(Align.CENTER);
+		mTextPaint.setTextSize(20);
+		
 		if (width > height) {
 			mOrientation = WallOrientation.HORIZONTAL;
 		} else if (height > width) {
@@ -44,9 +54,14 @@ public class Wall extends Rectangle {
 		}
 		
 		// Init graphics
-		normalImage = SwipeNRoll.resources.getDrawable(R.drawable.wall_normal);
-		pressedImage = SwipeNRoll.resources.getDrawable(R.drawable.wall_pressed);
-		mDrawable = normalImage;
+		mNormalImage = SwipeNRoll.resources.getDrawable(R.drawable.wall_normal);
+		mPressedImage = SwipeNRoll.resources.getDrawable(R.drawable.wall_pressed);
+		mDrawable = mNormalImage;
+	}
+	
+	public Wall(float x, float y, float width, float height, String text) {
+		this(x, y, width, height);
+		mText = text;
 	}
 	
 	public boolean contains(int x, int y) {
@@ -54,16 +69,24 @@ public class Wall extends Rectangle {
 	}
 	
 	public void onTouchStart() {
-		pressedImage.setBounds(normalImage.getBounds());
-		mDrawable = pressedImage;
+		mPressedImage.setBounds(mNormalImage.getBounds());
+		mDrawable = mPressedImage;
 	}
 	
 	public void onTouchEnd() {
-		normalImage.setBounds(pressedImage.getBounds());
-		mDrawable = normalImage;
+		mNormalImage.setBounds(mPressedImage.getBounds());
+		mDrawable = mNormalImage;
 	}
 
 	public WallOrientation getOrientation() {
 		return mOrientation;
+	}
+	
+	@Override
+	public void draw(Canvas canvas) {
+		super.draw(canvas);
+		if (mText != null) {
+			canvas.drawText(mText, mScreenPos.x, mScreenPos.y + 5, mTextPaint);
+		}
 	}
 }
