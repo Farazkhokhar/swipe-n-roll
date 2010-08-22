@@ -22,6 +22,7 @@ import se.anyro.snr.bodies.Body;
 import se.anyro.snr.bodies.Bridge;
 import se.anyro.snr.bodies.Circle;
 import se.anyro.snr.bodies.Goal;
+import se.anyro.snr.bodies.Laser;
 import se.anyro.snr.bodies.SquareHole;
 import se.anyro.snr.bodies.Wall;
 import android.graphics.Canvas;
@@ -51,6 +52,7 @@ public class GameThread implements Runnable, ContactListener {
 	private PaintDrawable mBackground;
 	private ArrayList<Body> mBodies = new ArrayList<Body>();
 	private ArrayList<Wall> mWalls= new ArrayList<Wall>();
+	private ArrayList<Laser> mLasers= new ArrayList<Laser>();
 	private Wall mSwipee; // The wall being swiped
 	
 	private Physics mPhysics;
@@ -150,6 +152,7 @@ public class GameThread implements Runnable, ContactListener {
 			body.destroy();
 		mBodies.clear();
 		mWalls.clear();
+		mLasers.clear();
 	}
     
 	public void add(Body body) {
@@ -157,6 +160,8 @@ public class GameThread implements Runnable, ContactListener {
 		
 		if (body instanceof Wall)
 			mWalls.add((Wall) body);
+		else if (body instanceof Laser)
+			mLasers.add((Laser) body);
 	}
 
 	public void addTouchEvent(MotionEvent event) {
@@ -391,6 +396,18 @@ public class GameThread implements Runnable, ContactListener {
 		
 		// Remember the new position
 		mTouchStart.y = mTouchMove.y;
+		
+		if (mLasers.size() > 0) {
+			float top = pos.y + mSwipee.getHeight()/2f;
+			float bottom = pos.y -mSwipee.getHeight()/2f;
+			for (Laser laser : mLasers) {
+				float laserY = laser.getPosition().y;
+				if (top > laserY && bottom < laserY)
+					laser.block(pos.x + mSwipee.getWidth()/2f);
+				else
+					laser.unBlock();
+			}
+		}
 	}
 	
 	private void touchEnd() {
