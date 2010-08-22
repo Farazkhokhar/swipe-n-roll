@@ -11,9 +11,9 @@ public class EvilWall extends Wall {
 		mCollider = true;
 		
 		// Init graphics
-		normalImage = SwipeNRoll.resources.getDrawable(R.drawable.wall_evil_normal);
-		pressedImage = SwipeNRoll.resources.getDrawable(R.drawable.wall_evil_pressed);
-		mDrawable = normalImage;
+		mNormalImage = SwipeNRoll.resources.getDrawable(R.drawable.wall_evil_normal);
+		mPressedImage = SwipeNRoll.resources.getDrawable(R.drawable.wall_evil_pressed);
+		mDrawable = mNormalImage;
 	}
 
 }
