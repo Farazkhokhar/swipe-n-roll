@@ -34,8 +34,8 @@ public class Physics {
 	
 	public static int GAME_WIDTH = 20;
 	public static int GAME_HEIGHT = 30;
-	private static int HALF_WIDTH = GAME_WIDTH / 2;
-	private static int HALF_HEIGHT = GAME_HEIGHT / 2;
+	public static int HALF_WIDTH = GAME_WIDTH / 2;
+	public static int HALF_HEIGHT = GAME_HEIGHT / 2;
 
 	public Physics(ContactListener listener) {
 		world.setContactListener(listener);
