@@ -27,7 +27,7 @@
       android:textColor="#ffff3300"
       android:textSize="36sp"/>
     <TextView
-      android:text="Early Beta Version"
+      android:text="Beta"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:textColor="#ffffcc00"
