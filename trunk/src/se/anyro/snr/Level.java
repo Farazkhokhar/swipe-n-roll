@@ -1,6 +1,7 @@
 package se.anyro.snr;
 
 import se.anyro.snr.bodies.Ball;
+import se.anyro.snr.bodies.EvilWall;
 import se.anyro.snr.bodies.Goal;
 import se.anyro.snr.bodies.Hole;
 import se.anyro.snr.bodies.Laser;
@@ -41,7 +42,7 @@ public abstract class Level {
 		new Level() {
 			@Override
 			public void setup(GameThread gameThread) {
-				gameThread.add(new SquareHole(0, 7, 13, 3));
+				gameThread.add(new EvilWall(0, 7, 13, 3));
 		        
 		        gameThread.add(new SquareHole(-6.5f, -3, 7, 3));
 		        gameThread.add(new SquareHole(6.5f, -3, 7, 3));
@@ -56,11 +57,8 @@ public abstract class Level {
 			public void setup(GameThread gameThread) {
 				
 				gameThread.add(new SquareHole(6, 10, 7, 3));
-
 				gameThread.add(new SquareHole(-6, 3, 7, 3));
-
 				gameThread.add(new SquareHole(6, -3, 7, 3));
-
 				gameThread.add(new SquareHole(-6, -10, 7, 3));
 
 		        gameThread.add(new Wall(0, 11.6f, 3.2f, 6.8f));
@@ -98,7 +96,7 @@ public abstract class Level {
 		        
 		        gameThread.add(new Wall(1.5f, 9, 17, 2));
 		        gameThread.add(new Wall(-1.5f, 0, 17, 2));
-		        gameThread.add(new Wall(-1.5f, -8, 17, 2));
+		        gameThread.add(new EvilWall(-1.5f, -8, 17, 2));
 		        
 		        gameThread.add(new Goal(-8, 13));
 
