@@ -18,6 +18,7 @@ package se.anyro.snr;
 
 import java.util.ArrayList;
 
+import se.anyro.snr.bodies.Ball;
 import se.anyro.snr.bodies.Body;
 import se.anyro.snr.bodies.Bridge;
 import se.anyro.snr.bodies.Circle;
@@ -53,6 +54,7 @@ public class GameThread implements Runnable, ContactListener {
 	private ArrayList<Body> mBodies = new ArrayList<Body>();
 	private ArrayList<Wall> mWalls= new ArrayList<Wall>();
 	private ArrayList<Laser> mLasers= new ArrayList<Laser>();
+	private Ball mBall;
 	private Wall mSwipee; // The wall being swiped
 	
 	private Physics mPhysics;
@@ -68,10 +70,11 @@ public class GameThread implements Runnable, ContactListener {
     private Point mTouchEnd = new Point();
     private Object mTouchLock = new Object();
     
-	private float mLeftLimit = -10;
-	private float mRightLimit = 10;
-	private float mTopLimit = 15;
-	private float mBottomLimit = -15;
+    // Temporary swipe limits
+	private float mLeftLimit = -Physics.HALF_WIDTH;
+	private float mRightLimit = Physics.HALF_WIDTH;
+	private float mTopLimit = Physics.HALF_HEIGHT;
+	private float mBottomLimit = -Physics.HALF_HEIGHT;
 	
 	private State mState = State.INIT;
 	private int mLevel = 1;
@@ -162,6 +165,8 @@ public class GameThread implements Runnable, ContactListener {
 			mWalls.add((Wall) body);
 		else if (body instanceof Laser)
 			mLasers.add((Laser) body);
+		else if (body instanceof Ball)
+			mBall = (Ball) body;
 	}
 
 	public void addTouchEvent(MotionEvent event) {
@@ -219,12 +224,7 @@ public class GameThread implements Runnable, ContactListener {
 						// updateSound();
 						updateGraphics(canvas);
 					} finally {
-						// do this in a finally so that if an exception is thrown
-						// during the above, we don't leave the Surface in an
-						// inconsistent state
-						if (canvas != null) {
-							mSurfaceHolder.unlockCanvasAndPost(canvas);
-						}
+						mSurfaceHolder.unlockCanvasAndPost(canvas);
 					}
 				}
 			}
@@ -285,8 +285,8 @@ public class GameThread implements Runnable, ContactListener {
 	
 	private void calculateHorizontalSwipeLimits() {
 		float halfWidth = mSwipee.getWidth() / 2f;
-		mLeftLimit = -10 + halfWidth;
-		mRightLimit = 10 - halfWidth;
+		mLeftLimit = -Physics.HALF_WIDTH + halfWidth;
+		mRightLimit = Physics.HALF_WIDTH - halfWidth;
 		
 		Rect swipeeBounds = mSwipee.getScreenBounds();
 		
@@ -317,8 +317,8 @@ public class GameThread implements Runnable, ContactListener {
 
 	private void calculateVerticalSwipeLimits() {
 		float halfHeight = mSwipee.getHeight() / 2f;
-		mTopLimit = 15 - halfHeight;
-		mBottomLimit = -15 + halfHeight;
+		mTopLimit = Physics.HALF_HEIGHT - halfHeight;
+		mBottomLimit = -Physics.HALF_HEIGHT + halfHeight;
 		
 		Rect swipeeBounds = mSwipee.getScreenBounds();
 		
@@ -370,10 +370,13 @@ public class GameThread implements Runnable, ContactListener {
 		// Move one of the walls
 		Vector2 pos = mSwipee.getPosition();
 		pos.x += diffX;
+
+		// Check swipe limits
 		if (pos.x < mLeftLimit)
 			pos.x = mLeftLimit;
 		else if (pos.x > mRightLimit)
 			pos.x = mRightLimit;
+
 		mSwipee.setPosition(pos);
 		
 		// Remember the new position
@@ -388,10 +391,13 @@ public class GameThread implements Runnable, ContactListener {
 		// Move one of the walls
 		Vector2 pos = mSwipee.getPosition();
 		pos.y -= diffY;
+		
+		// Check swipe limits
 		if (pos.y > mTopLimit)
 			pos.y = mTopLimit;
 		else if (pos.y < mBottomLimit)
 			pos.y = mBottomLimit;
+		
 		mSwipee.setPosition(pos);
 		
 		// Remember the new position
@@ -423,54 +429,60 @@ public class GameThread implements Runnable, ContactListener {
 		
 		mPhysics.update();
 		
-		if (mCollision != null) {
+		if (mCollision == null)
+			return;
 			
-			Body collider = mCollision.collider;
-			Body ball = mCollision.ball;
-			
-			if (collider instanceof Circle) {
-				ball.setPosition(collider.getPosition());
-			} else if (collider instanceof SquareHole) {
-				SquareHole hole = (SquareHole) collider;
-				float x = ball.getPosition().x;
-				float minX = hole.getPosition().x - hole.getWidth() / 2f + 1f;
-				if (x < minX) {
-					x = minX;
-				} else {
-					float maxX = hole.getPosition().x + hole.getWidth() / 2f - 1f;
-					if (x > maxX)
-						x = maxX;
-				}
-				float y = ball.getPosition().y;
-				float minY = hole.getPosition().y - hole.getHeight() / 2f + 1f;
-				if (y < minY) {
-					y = minY;
-				} else {
-					float maxY = hole.getPosition().y + hole.getHeight() / 2f - 1f;
-					if (y > maxY)
-						y = maxY;
-				}
-				ball.setPosition(new Vector2(x, y));
-			}
-			
-			if (collider instanceof Bridge) {
-				Bridge bridge = (Bridge) collider;
-				bridge.collision(ball);
-			} else if (collider instanceof Goal) {
-				mState = State.WIN;
-				if (mLevel < Level.count()) {
-					++mLevel; 
-					mHandler.sendEmptyMessage(WIN);
-				} else {
-					mLevel = 1;
-					mHandler.sendEmptyMessage(COMPLETED);
-				}
-				mCollision = null;
+		Body collider = mCollision.collider;
+		Body ball = mCollision.ball;
+		
+		// Visualize the ball going into a hole
+		if (collider instanceof Circle) {
+			ball.setPosition(collider.getPosition());
+		} else if (collider instanceof SquareHole) {
+			SquareHole hole = (SquareHole) collider;
+
+			// Calculate the nearest x-position inside the hole
+			float x = ball.getPosition().x;
+			float minX = hole.getPosition().x - hole.getWidth() / 2f + 1f;
+			if (x < minX) {
+				x = minX;
 			} else {
-				mState = State.GAME_OVER;
-				mHandler.sendEmptyMessage(GAME_OVER);
-				mCollision = null;
+				float maxX = hole.getPosition().x + hole.getWidth() / 2f - 1f;
+				if (x > maxX)
+					x = maxX;
 			}
+			
+			// Calculate the nearest y-position inside the hole
+			float y = ball.getPosition().y;
+			float minY = hole.getPosition().y - hole.getHeight() / 2f + 1f;
+			if (y < minY) {
+				y = minY;
+			} else {
+				float maxY = hole.getPosition().y + hole.getHeight() / 2f - 1f;
+				if (y > maxY)
+					y = maxY;
+			}
+			
+			ball.setPosition(new Vector2(x, y));
+		}
+		
+		if (collider instanceof Bridge) {
+			Bridge bridge = (Bridge) collider;
+			bridge.collision(ball);
+		} else if (collider instanceof Goal) {
+			mState = State.WIN;
+			if (mLevel < Level.count()) {
+				++mLevel; 
+				mHandler.sendEmptyMessage(WIN);
+			} else {
+				mLevel = 1;
+				mHandler.sendEmptyMessage(COMPLETED);
+			}
+			mCollision = null;
+		} else {
+			mState = State.GAME_OVER;
+			mHandler.sendEmptyMessage(GAME_OVER);
+			mCollision = null;
 		}
 	}
 
@@ -488,6 +500,15 @@ public class GameThread implements Runnable, ContactListener {
 	// Collision between two bodies started
 	@Override
 	public void beginContact(Contact contact) {
+				
+		Vector2 ballSpeed = mBall.getSpeed();
+		if (ballSpeed.len2() > 25) {
+			Vector2 normal = contact.GetWorldManifold().getNormal();
+			float collisionSpeed = Math.abs(normal.dot(ballSpeed));
+			if (collisionSpeed > 10)
+				SwipeNRoll.vibrator.vibrate((long) collisionSpeed);
+		}
+		
 		Body body1 = (Body) contact.getFixtureA().getBody().getUserData();
 		if (body1 == null)
 			return;

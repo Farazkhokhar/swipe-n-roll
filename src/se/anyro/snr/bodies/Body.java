@@ -48,6 +48,10 @@ public abstract class Body {
 		mStartPos = new Vector2(x, y);
 	}
 	
+	public Vector2 getSpeed() {
+		return mBody.getLinearVelocity();
+	}
+	
 	public Vector2 getPosition() {
 		return mBody.getPosition();
 	}

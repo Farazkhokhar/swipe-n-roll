@@ -22,6 +22,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Vibrator;
 import android.os.Handler.Callback;
 import android.view.MotionEvent;
 import android.view.View;
@@ -48,6 +49,7 @@ public class SwipeNRoll extends Activity {
 
 	// I know this is ugly. If you know how to fix it let me know.
 	public static Resources resources;
+	public static Vibrator vibrator;
 	
 	// Handler for receiving messages from the game thread in order to
 	// display messages on top of the game view.
@@ -91,6 +93,7 @@ public class SwipeNRoll extends Activity {
         super.onCreate(savedInstanceState);
 
         resources = getResources();
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         
         makeFullScreen();
         
