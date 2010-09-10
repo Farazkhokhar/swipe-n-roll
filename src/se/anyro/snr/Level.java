@@ -133,7 +133,7 @@ public abstract class Level {
 		        gameThread.add(new Hole(-3.5f, 13));
 		        
 		        // Lower left
-		        gameThread.add(new SquareHole(-5, -3, 5, 4));
+		        gameThread.add(new SquareHole(-5, -3, 5, 5));
 		        gameThread.add(new Hole(-4, -13));
 		        
 		        gameThread.add(new Goal(8, -13));
