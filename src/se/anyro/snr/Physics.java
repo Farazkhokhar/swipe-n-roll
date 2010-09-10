@@ -25,8 +25,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class Physics {
-	private float timeStep = (1f / 60f);
-	private int iterations = 5;
+	private final float timeStep = (1f / 60f);
+	private final int iterations = 5;
 	private long lastTime = System.currentTimeMillis();
 
 	private static Vector2 gravity = new Vector2();
