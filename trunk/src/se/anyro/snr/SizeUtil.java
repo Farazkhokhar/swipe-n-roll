@@ -22,29 +22,34 @@ import android.graphics.Point;
  * Methods for converting between the physics world coordinates and the screen coordinates.
  * Note! setScreenSize has to be called before the other methods are used.
  */
-public class SizeUtil {
-	private static int halfWidth = 160;
-	private static int halfHeight = 240;
+public final class SizeUtil {
+	private static int screenWidth = 320;
+	private static int screenHeight = 480;
+	private static int halfWidth = screenWidth / 2;
+	private static int halfHeight = screenHeight / 2;
 	private static float scale = 16;
 	
 	public static void setScreenSize(int width, int height) {
+		screenWidth = width;
+		screenHeight = height;
+		
 		halfWidth = width / 2;
 		halfHeight = height / 2;
 		
 		// Scale to maximum height/width depending on the ratio
     	if (width * 3 > height * 2) {
-    		scale = (float) height / 30;
+    		scale = (float) height / Physics.GAME_HEIGHT;
     	} else {
-    		scale = (float) width / 20f;
+    		scale = (float) width / Physics.GAME_WIDTH;
     	}
 	}
 	
 	public static int getScreenWidth() {
-		return halfWidth * 2;
+		return screenWidth;
 	}
 	
 	public static int getScreenHeight() {
-		return halfHeight * 2;
+		return screenHeight;
 	}
 	
 	public static void toScreen(float worldX, float worldY, Point screen) {
