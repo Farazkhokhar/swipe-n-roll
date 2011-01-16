@@ -20,6 +20,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Joint;
+import com.badlogic.gdx.physics.box2d.JointDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -31,6 +33,7 @@ public class Physics {
 
 	private static Vector2 gravity = new Vector2();
 	private static World world = new World(gravity, true);
+	private static Body ground;
 	
 	public static int GAME_WIDTH = 20;
 	public static int GAME_HEIGHT = 30;
@@ -65,6 +68,9 @@ public class Physics {
 		body.createFixture(wallShape, 0);
 
 		wallShape.dispose();
+		
+		// Ground for joints		
+		ground = world.createBody(bodyDef);
 	}
 
 	public void update() {
@@ -89,5 +95,17 @@ public class Physics {
 	
 	public static void destroyBody(Body body) {
 		world.destroyBody(body);
+	}
+
+	public static Joint createJoint(JointDef jointDef) {
+		return world.createJoint(jointDef);
+	}
+	
+	public static void destroyJoint(Joint joint) {
+		world.destroyJoint(joint);
+	}
+
+	public static Body getGround() {
+		return ground;
 	}
 }

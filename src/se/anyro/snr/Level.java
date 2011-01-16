@@ -5,6 +5,7 @@ import se.anyro.snr.bodies.EvilWall;
 import se.anyro.snr.bodies.Goal;
 import se.anyro.snr.bodies.Hole;
 import se.anyro.snr.bodies.Laser;
+import se.anyro.snr.bodies.RotatingWall;
 import se.anyro.snr.bodies.SquareHole;
 import se.anyro.snr.bodies.Wall;
 
@@ -35,7 +36,7 @@ public abstract class Level {
 		        gameThread.add(new Hole(8, -3));
 		        
 		        gameThread.add(new Goal(-8, 13));
-
+		        
 		        gameThread.add(new Ball(0, -13));
 			}
 		},
@@ -68,6 +69,38 @@ public abstract class Level {
 		        
 		        gameThread.add(new Goal(8, 13));
 
+		        gameThread.add(new Ball(-8, -13));
+			}
+		},
+		new Level() {
+			@Override
+			public void setup(GameThread gameThread) {
+
+		        gameThread.add(new Goal(8, 13));
+
+		        gameThread.add(new Hole(-8, 13));
+		        gameThread.add(new Hole(0, 13));
+
+				gameThread.add(new RotatingWall(-4.5f, 8, 8.5f, 3));
+		        gameThread.add(new RotatingWall(4.5f, 8, 8.5f, 3));
+		        
+		        gameThread.add(new Hole(-8, 4));
+		        gameThread.add(new Hole(0, 4));
+		        gameThread.add(new Hole(8, 4));
+
+		        gameThread.add(new RotatingWall(-4.5f, 0, 8.5f, 3));
+		        gameThread.add(new RotatingWall(4.5f, 0, 8.5f, 3));
+
+		        gameThread.add(new Hole(-8, -4));
+		        gameThread.add(new Hole(0, -4));
+		        gameThread.add(new Hole(8, -4));
+
+		        gameThread.add(new RotatingWall(-4.5f, -8, 8.5f, 3));
+		        gameThread.add(new RotatingWall(4.5f, -8, 8.5f, 3));
+
+		        gameThread.add(new Hole(0, -13));
+		        gameThread.add(new Hole(8, -13));
+		        
 		        gameThread.add(new Ball(-8, -13));
 			}
 		},
