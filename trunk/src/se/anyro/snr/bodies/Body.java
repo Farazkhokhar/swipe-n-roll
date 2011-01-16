@@ -78,4 +78,8 @@ public abstract class Body {
 	public void applyforce(Vector2 force) {
 		mBody.applyForce(force, ZERO_VECTOR);
 	}
+	
+	public com.badlogic.gdx.physics.box2d.Body getPhysicsBody() {
+		return mBody;
+	}
 }
