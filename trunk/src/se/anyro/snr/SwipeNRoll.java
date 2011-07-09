@@ -18,7 +18,6 @@ package se.anyro.snr;
 
 import android.app.Activity;
 import android.content.res.Resources;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -38,7 +37,6 @@ public class SwipeNRoll extends Activity {
 	private ViewGroup mGameViewGroup;
 
 	// Views contained in the game view group
-	private GameView mGameView;
 	private ViewGroup mMessageGroup;
 	private TextView mBigText;
 	private TextView mSmallText;
@@ -48,8 +46,8 @@ public class SwipeNRoll extends Activity {
 	private boolean mStarted = false;
 
 	// I know this is ugly. If you know how to fix it let me know.
-	public static Resources resources;
-	public static Vibrator vibrator;
+	public static Resources sResources;
+	public static Vibrator sVibrator;
 	
 	// Handler for receiving messages from the game thread in order to
 	// display messages on top of the game view.
@@ -92,8 +90,8 @@ public class SwipeNRoll extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        resources = getResources();
-        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        sResources = getResources();
+        sVibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         
         makeFullScreen();
         
@@ -102,7 +100,7 @@ public class SwipeNRoll extends Activity {
         mTitleViewGroup = (ViewGroup) View.inflate(this, R.layout.title, null);
         mGameViewGroup = (ViewGroup) View.inflate(this, R.layout.game, null);
 
-        mGameView = (GameView) mGameViewGroup.findViewById(R.id.game_view);
+        GameView mGameView = (GameView) mGameViewGroup.findViewById(R.id.game_view);
         mGameView.setGameThread(mGameThread);
         
         mMessageGroup = (ViewGroup) mGameViewGroup.findViewById(R.id.message_group);
@@ -131,8 +129,7 @@ public class SwipeNRoll extends Activity {
 
     	mGameThread.resume(null);
     	
-        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        Accelerometer.start(sensorManager);
+        Accelerometer.start(this);
         
 //        Debug.startMethodTracing("balldemo");
     };
