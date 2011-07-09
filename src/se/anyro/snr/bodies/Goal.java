@@ -24,7 +24,7 @@ public class Goal extends Circle {
 	public Goal(float x, float y) {
 		super(x, y, 1.1f, true);
 		
-		mDrawable = SwipeNRoll.resources.getDrawable(R.drawable.goal);
+		mDrawable = SwipeNRoll.sResources.getDrawable(R.drawable.goal);
 		
 		mCollider = true;
 	}

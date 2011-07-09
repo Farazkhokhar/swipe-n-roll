@@ -49,8 +49,8 @@ public class Laser extends Body {
 		mHeight = 30f/480 * Physics.GAME_HEIGHT;
 
 		// Init graphics
-		mCannonDrawable = SwipeNRoll.resources.getDrawable(R.drawable.laser_cannon);
-		mBeamDrawable = SwipeNRoll.resources.getDrawable(R.drawable.laser);
+		mCannonDrawable = SwipeNRoll.sResources.getDrawable(R.drawable.laser_cannon);
+		mBeamDrawable = SwipeNRoll.sResources.getDrawable(R.drawable.laser);
 		
 		// Calculate cannon bounds
 		int right = SizeUtil.getScreenWidth();

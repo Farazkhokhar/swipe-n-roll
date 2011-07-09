@@ -25,10 +25,10 @@ public class Ball extends Circle {
 	
 	private static final float RADIUS = 1;
 	
-	public Ball(int x, int y) {
+	public Ball(float x, float y) {
 		super(x, y, RADIUS, false);
 		
-		mDrawable = SwipeNRoll.resources.getDrawable(R.drawable.ball);
+		mDrawable = SwipeNRoll.sResources.getDrawable(R.drawable.ball);
 
 		mBody.setType(BodyType.DynamicBody);
 		mFixture.setRestitution(0.4f);
