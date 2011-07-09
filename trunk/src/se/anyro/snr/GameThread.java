@@ -506,7 +506,7 @@ public class GameThread implements Runnable, ContactListener {
 			Vector2 normal = contact.GetWorldManifold().getNormal();
 			float collisionSpeed = Math.abs(normal.dot(ballSpeed));
 			if (collisionSpeed > 10)
-				SwipeNRoll.vibrator.vibrate((long) collisionSpeed);
+				SwipeNRoll.sVibrator.vibrate((long) collisionSpeed);
 		}
 		
 		Body body1 = (Body) contact.getFixtureA().getBody().getUserData();

@@ -28,6 +28,6 @@ public class SquareHole extends Rectangle {
 		mCollider = true;
 		
 		// Init graphics
-		mDrawable = SwipeNRoll.resources.getDrawable(R.drawable.hole_square);
+		mDrawable = SwipeNRoll.sResources.getDrawable(R.drawable.hole_square);
 	}
 }

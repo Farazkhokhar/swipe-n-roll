@@ -26,7 +26,7 @@ public class Hole extends Circle {
 	public Hole(float x, float y) {
 		super(x, y, 1.1f, true);
 		
-		mDrawable = SwipeNRoll.resources.getDrawable(R.drawable.hole);
+		mDrawable = SwipeNRoll.sResources.getDrawable(R.drawable.hole);
 		
 		mCollider = true;
 		

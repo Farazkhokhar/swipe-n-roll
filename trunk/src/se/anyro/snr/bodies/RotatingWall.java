@@ -21,7 +21,7 @@ public class RotatingWall extends Block {
 		jointDef.localAnchorB.set(0, 0);
 		mJoint = Physics.createJoint(jointDef);
 		
-		mDrawable = SwipeNRoll.resources.getDrawable(R.drawable.wall_normal);
+		mDrawable = SwipeNRoll.sResources.getDrawable(R.drawable.wall_normal);
 	}
 
 	@Override

@@ -54,8 +54,8 @@ public class Wall extends Rectangle {
 		}
 		
 		// Init graphics
-		mNormalImage = SwipeNRoll.resources.getDrawable(R.drawable.wall_normal);
-		mPressedImage = SwipeNRoll.resources.getDrawable(R.drawable.wall_pressed);
+		mNormalImage = SwipeNRoll.sResources.getDrawable(R.drawable.wall_normal);
+		mPressedImage = SwipeNRoll.sResources.getDrawable(R.drawable.wall_pressed);
 		mDrawable = mNormalImage;
 	}
 	

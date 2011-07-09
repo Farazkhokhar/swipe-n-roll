@@ -23,45 +23,45 @@ import android.graphics.Point;
  * Note! setScreenSize has to be called before the other methods are used.
  */
 public final class SizeUtil {
-	private static int screenWidth = 320;
-	private static int screenHeight = 480;
-	private static int halfWidth = screenWidth / 2;
-	private static int halfHeight = screenHeight / 2;
-	private static float scale = 16;
+	private static int sScreenWidth = 320;
+	private static int sScreenHeight = 480;
+	private static int sHalfWidth = sScreenWidth / 2;
+	private static int sHalfHeight = sScreenHeight / 2;
+	private static float sScale = 16;
 	
 	public static void setScreenSize(int width, int height) {
-		screenWidth = width;
-		screenHeight = height;
+		sScreenWidth = width;
+		sScreenHeight = height;
 		
-		halfWidth = width / 2;
-		halfHeight = height / 2;
+		sHalfWidth = width / 2;
+		sHalfHeight = height / 2;
 		
 		// Scale to maximum height/width depending on the ratio
     	if (width * 3 > height * 2) {
-    		scale = (float) height / Physics.GAME_HEIGHT;
+    		sScale = (float) height / Physics.GAME_HEIGHT;
     	} else {
-    		scale = (float) width / Physics.GAME_WIDTH;
+    		sScale = (float) width / Physics.GAME_WIDTH;
     	}
 	}
 	
 	public static int getScreenWidth() {
-		return screenWidth;
+		return sScreenWidth;
 	}
 	
 	public static int getScreenHeight() {
-		return screenHeight;
+		return sScreenHeight;
 	}
 	
 	public static void toScreen(float worldX, float worldY, Point screen) {
-		screen.x = halfWidth + (int) (worldX * scale);
-		screen.y = halfHeight - (int) (worldY * scale);
+		screen.x = sHalfWidth + (int) (worldX * sScale);
+		screen.y = sHalfHeight - (int) (worldY * sScale);
 	}
 	
 	public static int toScreen(float worldLen) {
-		return (int) (worldLen * scale);
+		return (int) (worldLen * sScale);
 	}
 
 	public static float fromScreen(int screenLen) {
-		return screenLen / scale;
+		return screenLen / sScale;
 	}
 }

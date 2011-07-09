@@ -31,9 +31,9 @@ public class Physics {
 	private final int iterations = 5;
 	private long lastTime = System.currentTimeMillis();
 
-	private static Vector2 gravity = new Vector2();
-	private static World world = new World(gravity, true);
-	private static Body ground;
+	private static Vector2 sGravity = new Vector2();
+	private static World sWorld = new World(sGravity, true);
+	private static Body sGround;
 	
 	public static int GAME_WIDTH = 20;
 	public static int GAME_HEIGHT = 30;
@@ -41,7 +41,7 @@ public class Physics {
 	public static int HALF_HEIGHT = GAME_HEIGHT / 2;
 
 	public Physics(ContactListener listener) {
-		world.setContactListener(listener);
+		sWorld.setContactListener(listener);
 
 		PolygonShape wallShape = new PolygonShape();
 		BodyDef bodyDef = new BodyDef();
@@ -49,28 +49,28 @@ public class Physics {
 		
 		// Upper wall
 		wallShape.setAsEdge(new Vector2(-HALF_WIDTH, HALF_HEIGHT), new Vector2(HALF_WIDTH, HALF_HEIGHT));		
-		com.badlogic.gdx.physics.box2d.Body body = world.createBody(bodyDef);
+		com.badlogic.gdx.physics.box2d.Body body = sWorld.createBody(bodyDef);
 		body.createFixture(wallShape, 0);
 		
 		// Right wall
 		wallShape.setAsEdge(new Vector2(HALF_WIDTH, HALF_HEIGHT), new Vector2(HALF_WIDTH, -HALF_HEIGHT));		
-		body = world.createBody(bodyDef);
+		body = sWorld.createBody(bodyDef);
 		body.createFixture(wallShape, 0);
 
 		// Lower wall
 		wallShape.setAsEdge(new Vector2(HALF_WIDTH, -HALF_HEIGHT), new Vector2(-HALF_WIDTH, -HALF_HEIGHT));		
-		body = world.createBody(bodyDef);
+		body = sWorld.createBody(bodyDef);
 		body.createFixture(wallShape, 0);
 
 		// Left wall
 		wallShape.setAsEdge(new Vector2(-HALF_WIDTH, -HALF_HEIGHT), new Vector2(-HALF_WIDTH, HALF_HEIGHT));		
-		body = world.createBody(bodyDef);
+		body = sWorld.createBody(bodyDef);
 		body.createFixture(wallShape, 0);
 
 		wallShape.dispose();
 		
 		// Ground for joints		
-		ground = world.createBody(bodyDef);
+		sGround = sWorld.createBody(bodyDef);
 	}
 
 	public void update() {
@@ -82,30 +82,30 @@ public class Physics {
 			timeDiff = timeStep;
 		}
 		
-		gravity.x = -Accelerometer.getX() * 15;
-		gravity.y = -Accelerometer.getY() * 15;
-		world.setGravity(gravity);
+		sGravity.x = -Accelerometer.getX() * 15;
+		sGravity.y = -Accelerometer.getY() * 15;
+		sWorld.setGravity(sGravity);
 		
-		world.step(timeDiff, iterations, iterations);
+		sWorld.step(timeDiff, iterations, iterations);
 	}
 
 	public static Body createBody(BodyDef bodyDef) {
-		return world.createBody(bodyDef);
+		return sWorld.createBody(bodyDef);
 	}
 	
 	public static void destroyBody(Body body) {
-		world.destroyBody(body);
+		sWorld.destroyBody(body);
 	}
 
 	public static Joint createJoint(JointDef jointDef) {
-		return world.createJoint(jointDef);
+		return sWorld.createJoint(jointDef);
 	}
 	
 	public static void destroyJoint(Joint joint) {
-		world.destroyJoint(joint);
+		sWorld.destroyJoint(joint);
 	}
 
 	public static Body getGround() {
-		return ground;
+		return sGround;
 	}
 }
