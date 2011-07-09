@@ -18,30 +18,33 @@ package se.anyro.snr;
 
 import java.util.List;
 
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
+import android.view.Display;
+import android.view.Surface;
+import android.view.WindowManager;
 
 /**
- * Simple class for accessing the x, y, z values of the accelerometer in a static way
+ * Accessing the x, y, z values of the accelerometer in a static way
  */
 public final class Accelerometer {
     
-	private static SensorManager sensorManager;
-    private static Sensor sensor;
-    private static boolean started = false;
+	private static SensorManager sSensorManager;
+    private static Sensor sAccSensor;
+    private static boolean sStarted = false;
     
     // Slightly off initial values for use with the emulator
     private static float x = 0.01f;
     private static float y = 9.81f;
     private static float z = 0.01f;
     
-    private static SensorEventListener listener = new SensorEventListener() {
+    private static SensorEventListener listener0 = new SensorEventListener() {
     	
-    	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-    		// Part of the interface but not used here
-    	}
+    	public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
     	public void onSensorChanged(SensorEvent event) {
     		x = event.values[0];
@@ -49,6 +52,41 @@ public final class Accelerometer {
     		z = event.values[2];
     	}
     };
+    
+    private static SensorEventListener listener90 = new SensorEventListener() {
+        
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+
+        public void onSensorChanged(SensorEvent event) {
+            x = -event.values[1];
+            y = event.values[0];
+            z = event.values[2];
+        }
+    };
+    
+    private static SensorEventListener listener180 = new SensorEventListener() {
+        
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+
+        public void onSensorChanged(SensorEvent event) {
+            x = -event.values[0];
+            y = -event.values[1];
+            z = event.values[2];
+        }
+    };
+    
+    private static SensorEventListener listener270 = new SensorEventListener() {
+        
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+
+        public void onSensorChanged(SensorEvent event) {
+            x = event.values[1];
+            y = -event.values[0];
+            z = event.values[2];
+        }
+    };
+    
+    private static SensorEventListener listener = listener0;
     
 	private Accelerometer() {
 	}
@@ -65,28 +103,50 @@ public final class Accelerometer {
     	return z;
     }
     
-	public static void start(SensorManager sensorManager) {
-		if (started) {
+	public static void start(Context context) {
+		if (sStarted) {
 			return;
 		}
-		if (sensor == null) {
-	        List<Sensor> sensors = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
-	        if (sensors.size() == 0)
-	        	throw new IllegalStateException("No accelerometer available");
-
-	        sensor = sensors.get(0);
-	        Accelerometer.sensorManager = sensorManager;
+		if (sAccSensor == null) {
+		    
+            sSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+            List<Sensor> accSensors = sSensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+            if (accSensors.size() == 0) {
+                throw new IllegalStateException("No accelerometer available");
+            }
+            sAccSensor = accSensors.get(0);
+            
+	        // Adjust rotation for devices who's natural orientation isn't portrait
+            // Using Display.getRotation() which is available since Froyo
+	        if (Integer.parseInt(Build.VERSION.SDK) >= Build.VERSION_CODES.FROYO) {
+	            WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+	            Display display = windowManager.getDefaultDisplay();
+                switch (display.getRotation()) {
+                case Surface.ROTATION_0:
+                    listener = listener0;
+                    break;
+                case Surface.ROTATION_90:
+                    listener = listener90;
+                    break;
+                case Surface.ROTATION_180:
+                    listener = listener180;
+                    break;
+                case Surface.ROTATION_270:
+                    listener = listener270;
+                    break;
+                }
+	        }
 		}
-    	sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_GAME);
-		started = true;
+    	sSensorManager.registerListener(listener, sAccSensor, SensorManager.SENSOR_DELAY_GAME);
+		sStarted = true;
 	}
 	
 	public static void stop() {
-		if (!started) {
+		if (!sStarted) {
 			return;
 		}
-		started = false;
+		sStarted = false;
 		
-		sensorManager.unregisterListener(listener);
+		sSensorManager.unregisterListener(listener);
 	}
 }
